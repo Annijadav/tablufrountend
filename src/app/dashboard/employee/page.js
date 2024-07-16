@@ -176,7 +176,7 @@ function page() {
         </ul>
       </div>
       <div class="card overflow-hidden">
-        <div class="card-body">
+        <div class="card-body p-2 m-1">
           <div class="flex justify-between items-center">
             <h3 class="text-lg font-semibold">Employee List</h3>
             <div className="flex items-center">
