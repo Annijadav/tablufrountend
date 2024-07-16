@@ -28,16 +28,20 @@ function page() {
     setShowProfile(false);
     setSelectedImage("");
   };
-  const token = localStorage.getItem("authToken");
-  const tokendata = jwtDecode(token);
 
   const getemployee = async () => {
     try {
-      const res = await getProfile(tokendata.id);
-      if (res.status === 200) {
-        await setUser(res.data.user);
-      } else {
-        toast.error(res.response.data.message);
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+          const tokendata = jwtDecode(token);
+          const res = await getProfile(tokendata.id);
+          if (res.status === 200) {
+            setUser(res.data.user);
+          } else {
+            toast.error(res.response.data.message);
+          }
+        }
       }
     } catch (error) {
       //console.log(error);
@@ -122,7 +126,7 @@ function page() {
               </div>
             </div>
             <div className="mt-6 flex justify-center space-x-4">
-            <Link href={`/dashboard/employee/editemployee/${tokendata.id}`}> <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600">
+            <Link href={`/dashboard/employee/editemployee/${user._id}`}> <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600">
                 edit
               </button></Link>
               <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-300">
