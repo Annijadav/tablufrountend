@@ -46,7 +46,11 @@ const Pagination = ({
     setPageJumper(currentPage);
   }, []);
   return (
-    <div className="flex justify-between mt-4">
+    <div  style={{
+      overflow: 'auto',
+      scrollbarWidth: 'none', // For Firefox
+      msOverflowStyle: 'none', // For IE and Edge
+    }} className="flex justify-between mt-4 overflow-auto">
       <div>
         <div className="flex items-center">
           <span className="pl-2 pr-2">Show </span>
@@ -76,7 +80,7 @@ const Pagination = ({
           <span className="pl-2 pr-2">Entries</span>
         </div>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex w-auto whitespace-nowrap items-center gap-1">
         <label className="input input-bordered flex items-center">
           <input
             type="text"
