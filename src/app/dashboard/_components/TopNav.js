@@ -57,7 +57,7 @@ function TopNav() {
         <DropdownMenu aria-label="Profile Actions" onAction={(key)=>handledropdown(key)} variant="flat">
           <DropdownItem key="profile" className="h-18 gap-1">
             <p className="font-semibold">Signed in as</p>
-            <p className="font-semibold">{localStorage.getItem("firstName")+" "+localStorage.getItem("lastName")}</p>
+            <p className="font-semibold"></p>
           </DropdownItem>
           <DropdownItem key="/dashboard/myaccount">
             My Account

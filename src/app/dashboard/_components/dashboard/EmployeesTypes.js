@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import ReactApexChart from 'react-apexcharts';
-import { getEmployeesTypes } from "@/helpers/Services/Dashboard_services"; // Import your API function
+import dynamic from "next/dynamic";
+const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
+import { getEmployeesTypes } from "@/helpers/Services/Dashboard_services"; // Import your API function
 const EmployeesTypes = () => {
   const [employeeTypes, setEmployeesTypes] = useState(null);
 
-  useEffect(() => {
-    getData();
-  }, []);
+
 
   const getData = async () => {
     try {
@@ -18,6 +17,11 @@ const EmployeesTypes = () => {
       console.log(error);
     }
   };
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      getData();
+    }
+  }, []);
 
   return (
     <div className="card w-100">

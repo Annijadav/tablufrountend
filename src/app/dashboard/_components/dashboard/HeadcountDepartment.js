@@ -76,7 +76,8 @@
 // };
 // export default HeadcountDepartment;
 import React, { useEffect, useState } from "react";
-import ReactApexChart from 'react-apexcharts';
+import dynamic from "next/dynamic";
+const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 import { getHeadcountDepartment } from "@/helpers/Services/Dashboard_services";
 import DropDown from "@/components/DropDown";
 

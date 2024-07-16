@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ReactApexChart from 'react-apexcharts';
+import dynamic from "next/dynamic";
+const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 import DropDown from "@/components/DropDown";
 import { getGendercount } from "@/helpers/Services/Dashboard_services";
