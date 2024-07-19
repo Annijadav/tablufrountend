@@ -33,9 +33,8 @@ function page() {
       if (res.status === 201) {
         toast.success("Send OTP Successfully");
         console.log("sss",res.data.email);
-        localStorage.setItem("authToken", res.data.email);
-        localStorage.setItem("step", 1);
-
+        // localStorage.setItem("authToken", res.data.email);
+        // localStorage.setItem("step", 1);
         redirectToVerifyOTP();
       }
       else{

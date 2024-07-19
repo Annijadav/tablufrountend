@@ -6,6 +6,7 @@ import {
   deleteDesignation,
   updateDesignation,
 } from "@/helpers/Services/Designation_services";
+import { validateForm } from "../designation/validations/designationValidation";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -76,23 +77,25 @@ function page() {
       try {
         console.log("id", id);
         setUpdateLoader(true);
-        // const data = {
-        //   name: editingItem.name,
-        //   departmentManager: editingItem.departmentManager,
-        // };
-        // console.log("data", data);
-        const res = await updateDesignation(id, {
+        const data = {
           name: editingItem.name,
           department: editingItem.department,
-        });
-        if (res.status === 201) {
-          console.log("res", res);
-          getDesignationList();
-          toast.success("Designation updated successfully");
-          setEditingItem(null);
-          toggleOverlay();
+        };
+        console.log("data", data);
+        const error = validateForm(data);
+        if (error) {
+          return toast.error(error);
         } else {
-          toast.error(res.response.data.message);
+          const res = await updateDesignation(id, data);
+          if (res.status === 201) {
+            console.log("res", res);
+            getDesignationList();
+            toast.success("Designation updated successfully");
+            setEditingItem(null);
+            toggleOverlay();
+          } else {
+            toast.error(res.response.data.message);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -159,7 +162,7 @@ function page() {
     //          {Object.keys(designation_data).map((departmentName, index) => (
     //            <div key={departmentName} className="w-full m-2 rounded shadow-md">
     //              <h2 className="text-lg font-semibold m-2">{departmentName}</h2>
-                 
+
     //              <ul className="list-disc pl-4 gap-2">
     //                {designation_data[departmentName].map((designation, idx) => (
     //                  <li key={designation._id} className="flex items-center mb-2">
@@ -196,6 +199,7 @@ function page() {
                     </span>
                   </button>
                 </Link>
+                {/* {JSON.stringify(designation_data)} */}
               </div>
               <p className="text-2xl font-bold mb-6">Designation List</p>
               <table className="min-w-full border rounded">
@@ -244,7 +248,7 @@ function page() {
               <p></p>
               <button className="-mt-4 -mr-4">
                 <svg
-                  className="swap-on mt--10 fill-current hover:text-blue-300"
+                  className="swap-on mt--10 fill-current hover:bg-blue-300 rounded-full"
                   onClick={() => setEditingItem(null)}
                   xmlns="http://www.w3.org/2000/svg"
                   width="25"
@@ -256,6 +260,7 @@ function page() {
               </button>
             </div>
             <h4 className="text-lg font-semibold mb-2">Designation Details</h4>
+            {/* {JSON.stringify(editingItem)} */}
             <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
               Name
             </p>
@@ -273,7 +278,7 @@ function page() {
             <select
               name="department"
               onChange={handleInputChange}
-              value={editingItem.department}
+              value={editingItem.department._id}
               className="select input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full mb-4"
             >
               <option value="">Please Select</option>

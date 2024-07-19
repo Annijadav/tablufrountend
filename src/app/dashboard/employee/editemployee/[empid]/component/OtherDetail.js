@@ -6,6 +6,8 @@ import {
 } from "@/helpers/Services/Employee_services";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { emergencyContactValidation } from "../validations/emergencyContactValidation";
+import { educationValidation } from "../validations/educationValidation";
 
 function OtherDetail({ data, edudetail, refreshdata, userid }) {
   const [EducationDetail, setEducationDetail] = useState([
@@ -16,7 +18,7 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
       percentage: "",
     },
   ]);
-  console.log(edudetail);
+  // console.log(edudetail);
   const [contact, setContact] = useState({
     name: data[0]?.name,
     address: data[0]?.address,
@@ -34,6 +36,12 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
   };
 
   const submit_Other_details = async () => {
+    const { error } = emergencyContactValidation(contact);
+    if (error) {
+      toast.error(error.details[0].message);
+      return;
+    }
+
     try {
       const response1 = await update_EmergencyDetail(userid, contact);
       if (response1.status === 201) {
@@ -54,6 +62,12 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
 
   const handleUpdate = async (rid) => {
     setUpdateLoader(true);
+    const { error } = educationValidation(editingItem);
+    if (error) {
+      toast.error(error.details[0].message);
+      setUpdateLoader(false);
+      return;
+    }
     const response = await update_eduById(userid, rid, editingItem);
     if (response.status === 201) {
       toast.success(response.data.message);
@@ -102,9 +116,8 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
       PassingYear: "",
       percentage: "",
     });
-  }
+  };
   const submit_addnew = async () => {
-    
     if (
       !newItem.diplomaDegreeName ||
       !newItem.instituteName ||
@@ -113,9 +126,16 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
     ) {
       toast.error("please fill all fields..");
     } else {
-      setUpdateLoader(true)
+      setUpdateLoader(true);
+      const { error } = educationValidation(newItem);
+      if (error) {
+        toast.error(error.details[0].message);
+        console.log(educationValidation(newItem));
+        setUpdateLoader(false);
+        return;
+      }
       const response = await update_Education(userid, newItem);
-      setUpdateLoader(false)
+      setUpdateLoader(false);
       if (response.status === 201) {
         setNewItem({
           diplomaDegreeName: "",
@@ -125,8 +145,8 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
         });
         toast.success(response.data.message);
         setNewItem(null);
-        setUpdateLoader(false)
-        refreshdata()
+        setUpdateLoader(false);
+        refreshdata();
       } else {
         toast.error(response.response.data.message);
       }
@@ -142,10 +162,8 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
   return (
     <>
       <div>
-        
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="">
-           
             <br />
             <h4>emergency Contacts Details</h4>
             <hr />
@@ -255,13 +273,13 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <span className="font-bold">Diploma/Degree Name</span>
+                        <span className="font-bold">Diploma/Degree Name</span>
                       </th>
                       <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <span className="font-bold">Institute Name</span>
+                        <span className="font-bold">Institute Name</span>
                       </th>
                       <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <span className="font-bold">Percentage</span>
+                        <span className="font-bold">Percentage</span>
                       </th>
                       <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         <span className="font-bold">Passing Year</span>
@@ -381,11 +399,10 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
               </div>
             </div>
           )}
-          
+
           {newItem && (
-            
             <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
-    <div className="bg-white p-10 rounded w-3/5 max-w-lg relative"> 
+              <div className="bg-white p-10 rounded w-3/5 max-w-lg relative">
                 <h4 className="text-lg font-semibold mb-4">Add new Record</h4>
                 <button
                   onClick={() => setNewItem(null)}
@@ -394,9 +411,9 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
                   Cancel
                 </button>
                 <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                Diploma / Degree Name
+                  Diploma / Degree Name
                 </p>
-                {JSON.stringify(newItem)}
+
                 <input
                   type="text"
                   name="diplomaDegreeName"
@@ -405,7 +422,7 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
                   placeholder="Diploma/Degree Name"
                   className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full mb-4"
                 />
-                  <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
+                <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                   Institute Name
                 </p>
                 <input
@@ -416,7 +433,7 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
                   placeholder="Institute Name"
                   className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full mb-4"
                 />
-                  <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
+                <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                   Percentage
                 </p>
                 <input
@@ -427,8 +444,8 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
                   placeholder="Percentage"
                   className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full mb-4"
                 />
-                 <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                 Passing date
+                <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
+                  Passing date
                 </p>
                 <input
                   type="date"
@@ -459,5 +476,4 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
     </>
   );
 }
-
 export default OtherDetail;

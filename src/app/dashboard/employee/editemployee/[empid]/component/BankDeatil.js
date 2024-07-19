@@ -1,6 +1,7 @@
 import { update_BankDetails } from "@/helpers/Services/Employee_services";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { bankValidation } from "../validations/bankValidation";
 
 function BankDeatil({ data, refreshdata, userid }) {
   const [bankDetails, setBankDetails] = useState({
@@ -22,6 +23,14 @@ function BankDeatil({ data, refreshdata, userid }) {
   const bankDetails_submit = async () => {
     setloader(true);
     try {
+      const {error} = bankValidation(bankDetails);
+      if(error)
+      {
+        toast.error(error.details[0].message);
+        setOverlayVisible(false);
+        setloader(false);
+        return;
+      }
       const response = await update_BankDetails(userid, bankDetails);
       if (response.status === 201) {
         toast.success(response.data.message);
@@ -82,7 +91,7 @@ function BankDeatil({ data, refreshdata, userid }) {
 
             <br />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-items-center">
-              <div className="w-full">
+              {/* <div className="w-full">
                 <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                   Payment Type
                 </p>
@@ -100,7 +109,7 @@ function BankDeatil({ data, refreshdata, userid }) {
                   <option value="CASH">CASH</option>
                   <option value="CHEQUE">CHEQUE</option>
                 </select>
-              </div>
+              </div> */}
               <div className="w-full">
                 <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                   Bank Name

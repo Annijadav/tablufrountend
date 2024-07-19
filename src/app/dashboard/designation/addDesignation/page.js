@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { getAddDesignation } from "@/helpers/Services/Designation_services";
 import { getAllDepartment } from "@/helpers/Services/Department_services";
+import { validateForm } from "../validations/designationValidation";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
@@ -61,6 +62,19 @@ function Page() {
         name: name,
         department: department,
       };
+      const error = validateForm(data);
+      if (error) {
+        return toast.error(error);
+      } else {
+        const res = await getAddDesignation(data);
+        console.log(res);
+        if (res.status === 201) {
+          toast.success(`${name} designation added successfully`);
+          redirectToDep();
+        } else {
+          toast.error(`${name} designation already exists`);
+        }
+      }
       const res = await getAddDesignation(data);
       console.log(res);
       if (res.status === 201) {
@@ -83,7 +97,7 @@ function Page() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 justify-items-center">
               <div className="w-full">
-              {/* {JSON.stringify(designantion)} */}
+                {/* {JSON.stringify(designantion)} */}
                 <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                   Name
                 </p>
@@ -106,12 +120,9 @@ function Page() {
                   value={designantion._id}
                   className="select input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
                 >
-                  
                   <option value="">Please Select</option>
                   {departments.map((department) => (
-                    <option value={department._id}>
-                      {department.name}
-                    </option>
+                    <option value={department._id}>{department.name}</option>
                   ))}
                 </select>
               </div>
@@ -122,6 +133,12 @@ function Page() {
                   onClick={handleDepartment}
                 >
                   Save
+                </button>
+                <button
+                  onClick={() => router.push("/dashboard/designation")}
+                  className="ml-3 text-white rounded bg-gray-300 hover:bg-gray-500  px-5 py-2.5"
+                >
+                  Back
                 </button>
               </div>
             </div>

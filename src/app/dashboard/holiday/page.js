@@ -10,6 +10,7 @@ import {
 } from "@/helpers/Services/Holiday_services";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { validateForm } from "../holiday/validations/holidayValidation";
 import { toast } from "react-toastify";
 import { Select } from "antd";
 import { jwtDecode } from "jwt-decode";
@@ -62,10 +63,13 @@ function page() {
   const handleApplicabilityChange = (index, name, value) => {
     console.log("index, name, value", index, name, value);
     if (name === "applicableOn") {
-      console.log("editingItem.holidayApplicabilities", editingItem.holidayApplicabilities);
+      console.log(
+        "editingItem.holidayApplicabilities",
+        editingItem.holidayApplicabilities
+      );
       // Check if the selected applicableOn value already exists in another applicability
       const isAlreadySelected = editingItem.holidayApplicabilities.some(
-        (applicability, idx) => 
+        (applicability, idx) =>
           applicability.applicableOn === value && idx !== index
       );
 
@@ -80,7 +84,7 @@ function page() {
       ...newApplicability[index],
       [name]: value,
     };
-     
+
     if (name === "applicableOn") {
       newApplicability[index].additionalField = null;
     }
@@ -254,16 +258,21 @@ function page() {
             : "not found",
         };
 
-        console.log("datadatadata", data);
-        const res = await updateHoliday(id, data);
-        if (res.status === 201) {
-          console.log("res", res);
-          getHolidayList();
-          toast.success("Holiday updated successfully");
-          setEditingItem(null);
-          toggleOverlay();
+        const error = validateForm(data);
+        if (error) {
+          return toast.error(error);
         } else {
-          toast.error(res.response.data.message);
+          console.log("datadatadata", data);
+          const res = await updateHoliday(id, data);
+          if (res.status === 201) {
+            console.log("res", res);
+            getHolidayList();
+            toast.success("Holiday updated successfully");
+            setEditingItem(null);
+            toggleOverlay();
+          } else {
+            toast.error(res.response.data.message);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -615,7 +624,11 @@ function page() {
                             mode="multiple"
                             placeholder="Select applicability"
                             value={applicability.additionalField}
-                            onDropdownVisibleChange={()=> fetchAllHolidayApplicability(applicability.applicableOn)}
+                            onDropdownVisibleChange={() =>
+                              fetchAllHolidayApplicability(
+                                applicability.applicableOn
+                              )
+                            }
                             onChange={(value) =>
                               handleApplicabilityChange(
                                 index,

@@ -13,6 +13,7 @@ import {
   getAllHoliday,
   getCalendarData,
 } from "@/helpers/Services/Holiday_services";
+import { validateLeaveRequestForm } from "@/app/myDashboard/validations/leaveValidation";
 import { toast } from "react-toastify";
 import { DatePicker, Badge, Calendar } from "antd";
 import { useRouter } from "next/navigation";
@@ -420,19 +421,23 @@ export default function Page() {
         proof: leaveData.proof,
       };
 
-      const res = await getApplyLeave(data);
-      if (res.status === 201) {
-        toast.success("Leave applied successfully");
-        handleClosePopover();
-        // fetchLeaveTypes(leaveData.userID);
-        getHolidayList(decoded.id);
+      const error = validateLeaveRequestForm(data);
+      if (error) {
+        return toast.error(error);
       } else {
-        toast.error(res.response.data.message);
+        const res = await getApplyLeave(data);
+        if (res.status === 201) {
+          toast.success("Leave applied successfully");
+          handleClosePopover();
+          // fetchLeaveTypes(leaveData.userID);
+          getHolidayList(decoded.id);
+        } else {
+          toast.error(res.response.data.message);
+        }
       }
     } catch (error) {
       toast.error(error.message);
     }
-
   };
 
   const holidays = [
@@ -475,33 +480,36 @@ export default function Page() {
     const present = holiday_data?.presentDates.find(
       (h) => dayjs(h.date).format("YYYY-MM-DD") === formattedDate
     );
-  
+
     const isWeekend = disabledDate(date);
-  
+
     const dateCellStyle = {
       display: "flex",
       flexDirection: "column",
       justifyContent: "space-between",
       height: "100px", // Fixed height
-      width: "115px",  // Fixed width
+      width: "115px", // Fixed width
       padding: "6px",
       boxSizing: "border-box", // Ensure padding doesn't affect size
       overflow: "hidden", // Hide overflow content
     };
-  
+
     const dateNumberStyle = {
       alignSelf: "flex-end",
       fontSize: "12px",
       color: "#888",
     };
-  
+
     if (holiday) {
       return (
         <div
           className="rounded border"
           style={{ ...dateCellStyle, backgroundColor: "#85C1E9 " }}
         >
-          <div className="p-1 px-1 bg-red-500 rounded-full text-red-500" style={dateNumberStyle}>
+          <div
+            className="p-1 px-1 bg-red-500 rounded-full text-red-500"
+            style={dateNumberStyle}
+          >
             {date.date()}
           </div>
           <div
@@ -513,7 +521,7 @@ export default function Page() {
             }}
           >
             {holiday.name}
-            <br/>
+            <br />
           </div>
         </div>
       );
@@ -535,12 +543,12 @@ export default function Page() {
               textAlign: "center",
             }}
           >
-            {pending.status} <br/>({pending.time})
+            {pending.status} <br />({pending.time})
           </div>
         </div>
       );
     }
-    if (approved && approved.time ==="Full Day") {
+    if (approved && approved.time === "Full Day") {
       return (
         <div
           className="rounded border"
@@ -558,12 +566,15 @@ export default function Page() {
             }}
           >
             {/* {approved.status} */}Absent
-             <br/>({approved.time})
+            <br />({approved.time})
           </div>
         </div>
       );
     }
-    if (approved && (approved.time ==="First Half" || approved.time ==="Second Half")) {
+    if (
+      approved &&
+      (approved.time === "First Half" || approved.time === "Second Half")
+    ) {
       return (
         <div
           className="rounded border"
@@ -580,7 +591,7 @@ export default function Page() {
               textAlign: "center",
             }}
           >
-            {approved.status} <br/>({approved.time})
+            {approved.status} <br />({approved.time})
           </div>
         </div>
       );
@@ -607,7 +618,7 @@ export default function Page() {
         </div>
       );
     }
-  
+
     if (isWeekend) {
       return (
         <div
@@ -630,7 +641,7 @@ export default function Page() {
         </div>
       );
     }
-  
+
     return (
       <div className="rounded border" style={dateCellStyle}>
         <div className="py-1 px-1" style={dateNumberStyle}>
@@ -819,7 +830,7 @@ export default function Page() {
               <div className="mb-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Leave Type
-                  {JSON.stringify(leaveRule)}
+                  {/* {JSON.stringify(leaveRule)} */}
                 </label>
                 <select
                   value={leaveData.leaveType}

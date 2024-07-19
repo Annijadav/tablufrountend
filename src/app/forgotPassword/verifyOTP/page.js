@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { Flex, Input } from "antd";
 
-
 function Page() {
   const router = useRouter();
   const onChange = (text) => {
@@ -24,17 +23,16 @@ function Page() {
       router.push("/forgotPassword/resetPassword");
     }, 1000);
   };
-  useEffect(()=>{
-  if(localStorage.getItem("step")!==1)
-  {
-    router.push("/login");
-  }
+  useEffect(() => {
+    if (localStorage.getItem("step") !== 1) {
+      router.push("/login");
+    }
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setOTP(value); // Update the state of otp
-  // };
- },[]);
+    // const handleInputChange = (e) => {
+    //   const { name, value } = e.target;
+    //   setOTP(value); // Update the state of otp
+    // };
+  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setOTP(value); // Update the state of otp
@@ -111,9 +109,15 @@ function Page() {
                       />
                     </div> */}
                     <Flex className="mb-3 px-5 gap-8 items-center flex-col">
-  {/* <Title level={5}>Enter received OTP for password reset</Title> */}
-  <Input.OTP variant="filled" className="rounded border border-red text-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500" size="small" length={6} {...sharedProps} />
-</Flex>
+                      {/* <Title level={5}>Enter received OTP for password reset</Title> */}
+                      <Input.OTP
+                        variant="filled"
+                        className="rounded border border-red text-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        size="small"
+                        length={6}
+                        {...sharedProps}
+                      />
+                    </Flex>
 
                     <button
                       onClick={handleVerifyOTP}

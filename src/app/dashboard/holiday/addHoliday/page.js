@@ -8,8 +8,9 @@ import {
   postAddHoliday,
 } from "@/helpers/Services/Holiday_services";
 import { toast } from "react-toastify";
+import { validateForm } from "../validations/holidayValidation";
 import { useRouter } from "next/navigation";
-import { Select} from "antd";
+import { Select } from "antd";
 
 function Page() {
   const router = useRouter();
@@ -203,13 +204,19 @@ function Page() {
         holidayApplicability: holidayData.holidayApplicability,
         modifiedBy: decode.firstName + " " + decode.lastName,
       };
-      const res = await postAddHoliday(data);
-      console.log(res);
-      if (res.status === 201) {
-        toast.success(`${name} holiday added successfully`);
-        router.push("/dashboard/holiday");
+
+      const error = validateForm(data);
+      if (error) {
+        return toast.error(error);
       } else {
-        toast.error(res.response.data.message);
+        const res = await postAddHoliday(data);
+        console.log(res);
+        if (res.status === 201) {
+          toast.success(`${name} holiday added successfully`);
+          router.push("/dashboard/holiday");
+        } else {
+          toast.error(res.response.data.message);
+        }
       }
     } catch (error) {
       toast.error(error);

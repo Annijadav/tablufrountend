@@ -110,6 +110,11 @@ export async function getSelectedLeaveRule(userId, leaveTypeId) {
   }
 }
 
+
+
+
+
+
 // leave Rule Services
 
 export async function getAddLeaveRule(data) {
@@ -217,6 +222,7 @@ export async function updateAdvanceSettingsRule(
   }
 }
 
+//update leave rule name
 export async function updateLeaveRule(leaveRuleId, data) {
   try {
     const response = await apis.put(

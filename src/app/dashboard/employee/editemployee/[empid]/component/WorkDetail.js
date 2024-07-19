@@ -11,12 +11,14 @@ import { getAllLeaveRuleNames } from "@/helpers/Services/Leave_services";
 import React, { useEffect, useId, useState } from "react";
 
 import { toast } from "react-toastify";
+import { workDetailValidate } from "../validations/workDetailValidation";
+import { jobDetailsValidation } from "../validations/jobDetailsValidation";
 
 function WorkDetail({ data, refreshdata, workXp, userid }) {
   //console.log(workXp);
   const [department, setDepartment] = useState(null);
-  const [designation,setDesignation] = useState(null);
-  const [leaveRule,setLeaveRule] = useState(null);
+  const [designation, setDesignation] = useState(null);
+  const [leaveRule, setLeaveRule] = useState(null);
   const [editedData, setEditedData] = useState({});
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
@@ -44,7 +46,6 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
         //console.log(response);
         await setLeaveRule(response.data);
         console.log(response.data);
-        
       } else {
         console.log(response);
       }
@@ -128,6 +129,14 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
   const workDetails_submit = async () => {
     let er = false;
     try {
+      console.log(workDetails);
+      const { error } = workDetailValidate(workDetails);
+      console.log(error);
+      if (error) {
+        const errorMessage = error.details[0].message;
+        toast.error(errorMessage);
+        return;
+      }
       const res = await update_workDetails(userid, workDetails);
       if (res.status === 201) {
         console.log(res);
@@ -137,17 +146,30 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
       }
 
       if (workExperiences.length > 0) {
+        let flag = true;
         for (let i = 0; i < workExperiences.length; i++) {
-          const response = await update_ExperinceDetails(
-            userid,
-            workExperiences[i]
-          );
-          if (response.status === 201) {
-            //console.log("Record added successfully:",i+1);
-          } else {
-            toast.error(response.response.data.message);
-            er = true;
-            break;
+          const { error } = jobDetailsValidation(workExperiences[i]);
+
+          if (error) {
+            const errorMessage = error.details[0].message;
+            toast.error(errorMessage);
+            flag = false;
+            return;
+          }
+        }
+        if (flag) {
+          for (let i = 0; i < workExperiences.length; i++) {
+            const response = await update_ExperinceDetails(
+              userid,
+              workExperiences[i]
+            );
+            if (response.status === 201) {
+              //console.log("Record added successfully:",i+1);
+            } else {
+              toast.error(response.response.data.message);
+              er = true;
+              break;
+            }
           }
         }
       }
@@ -175,6 +197,12 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
   const handleUpdate = async () => {
     setBtnLoader(true);
     try {
+      const { error } = jobDetailsValidation(editedData);
+      console.log(error);
+      if (error) {
+        const errorMessage = error.details[0].message;
+        toast.error(errorMessage);
+      }
       const res = await update_ExpById(userid, editedData._id, editedData);
       if (res.status === 201) {
         toast.success(res.data.message);
@@ -194,29 +222,25 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
 
     console.log("Updated data:", editedData);
   };
-  const handledelete =async(rid)=>{
+  const handledelete = async (rid) => {
     deleteBtnLoader(true);
-    try{
-      const res = await delete_ExpById(userid,rid);
-      if(res.status===200)
-      {
+    try {
+      const res = await delete_ExpById(userid, rid);
+      if (res.status === 200) {
         deleteBtnLoader(false);
         toast.success(res.data.message);
         refreshdata();
         setEditingItem(null);
-      }
-      else
-      {
+      } else {
         toast.error(res.response.data.message);
         deleteBtnLoader(false);
       }
-    }catch(error)
-    {
+    } catch (error) {
       console.log(error);
       toast.error("something wrong...");
       deleteBtnLoader(false);
     }
-  }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -224,7 +248,6 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
   };
   return (
     <>
-    
       {/* Overlay */}
       {overlayVisible && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex justify-center items-center">
@@ -252,11 +275,9 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
       )}
       <div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-
-          
-        <br />
-            <h4>Work Details</h4>
-            <hr />
+          <br />
+          <h4>Work Details</h4>
+          <hr />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-items-center">
             <div className="w-full">
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
@@ -279,24 +300,24 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
                 type="text"
                 name="employeeCode"
                 placeholder="Employee Code"
-                onChange={handleWorkDetailsChange}
                 value={workDetails.employeeCode}
                 className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
+                disabled
               />
             </div>
             <div className="w-full">
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                 Leave Rule
               </p>
-              
+
               <select
                 name="leaveRule"
                 onChange={handleWorkDetailsChange}
-                value={workDetails.leaveRule}
+                value={workDetails.leaveRule._id}
                 className="select input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
               >
-              <option>please select</option>
-                {leaveRule?.map((rule)=>(
+                <option>please select</option>
+                {leaveRule?.map((rule) => (
                   <option value={rule?._id}>{rule.leaveRuleName}</option>
                 ))}
               </select>
@@ -318,14 +339,16 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                 Shift
               </p>
-              <input
-                type="text"
+              <select
                 name="shift"
                 placeholder="Shift"
                 onChange={handleWorkDetailsChange}
                 value={workDetails.shift}
                 className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
-              />
+              >
+                <option>please select</option>
+                <option value={"Day"}>Day</option>
+              </select>
             </div>
             <div className="w-full">
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
@@ -335,7 +358,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
               <select
                 name="department"
                 onChange={handleWorkDetailsChange}
-                value={workDetails.department}
+                value={workDetails.department._id}
                 className="select input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
               >
                 <option value={""}>Please Select</option>
@@ -353,7 +376,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
               <select
                 name="designation"
                 onChange={handleWorkDetailsChange}
-                value={workDetails.designation}
+                value={workDetails.designation._id}
                 className="select input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
               >
                 <option value={""}>Please Select</option>
@@ -571,7 +594,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
                       onChange={handleInputChange}
                       className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full mb-4"
                     />
-                    
+
                     <button
                       onClick={handleUpdate}
                       className="px-4 py-2 bg-green-400 mt-2 text-white rounded hover:bg-green-500"
@@ -585,9 +608,9 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
                         "Update"
                       )}
                     </button>
-                    
+
                     <button
-                      onClick={()=>handledelete(editedData._id)}
+                      onClick={() => handledelete(editedData._id)}
                       className="px-4 py-2 ml-2 bg-red-400 mt-2 text-white rounded hover:bg-red-600"
                     >
                       {deleteLoader ? (

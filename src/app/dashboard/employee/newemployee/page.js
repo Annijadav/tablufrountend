@@ -20,6 +20,12 @@ import Link from "next/link";
 import { getAllDesignation } from "@/helpers/Services/Designation_services";
 import { getAllLeaveRuleNames } from "@/helpers/Services/Leave_services";
 import ShowFullScreenLoading from "@/components/ShowFullScreenLoading";
+import { validatePersonalDetails } from "../editemployee/[empid]/validations/PersonalDetailValidator";
+import { workDetailValidate } from "../editemployee/[empid]/validations/workDetailValidation";
+import { jobDetailsValidation } from "../editemployee/[empid]/validations/jobDetailsValidation";
+import { bankValidation } from "../editemployee/[empid]/validations/bankValidation";
+import { emergencyContactValidation } from "../editemployee/[empid]/validations/emergencyContactValidation";
+import { educationValidation } from "../editemployee/[empid]/validations/educationValidation";
 
 function page() {
   const router = useRouter();
@@ -29,10 +35,10 @@ function page() {
   const nationalities = ["India", "United States", "United Kingdom", "Canada"];
   const bloodGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
   const maritalStatuses = ["Single", "Married", "Divorced", "Widowed"];
-  const [leaveRule,setLeaveRule] = useState(null);
+  const [leaveRule, setLeaveRule] = useState(null);
   const isBrowser = () => typeof window !== "undefined"; //The approach recommended by Next.js
   const [department, setDepartment] = useState([]);
-  const [loading,setLoading]= useState(false);
+  const [loading, setLoading] = useState(false);
   // ---------------------------- set state coutry city ---------------------------------
   const [countries, setcountries] = useState(null);
   const [pcountries, setpcountries] = useState(null);
@@ -138,7 +144,6 @@ function page() {
         //console.log(response);
         await setLeaveRule(response.data);
         console.log(response.data);
-        
       } else {
         console.log(response);
       }
@@ -208,12 +213,13 @@ function page() {
       toast.error(firstErrorMessage);
     } else {
       //console.log('Form data is valid:', value);
-      try {setLoading(true);
+      try {
+        setLoading(true);
         const res = await addemployee(value);
         setLoading(false);
         if (res?.status === 200) {
           await setuserid(res.data.userid);
-          ss
+          ss;
           setBasicDetails({
             firstName: "",
             lastName: "",
@@ -270,21 +276,33 @@ function page() {
     if (userid) {
       try {
         setLoading(true);
+        const { error } = validatePersonalDetails(personalDetails);
+        // console.log(error);
+        if (error) {
+          const errorMessage = error.details[0].message;
+          toast.error(errorMessage);
+          setLoading(false);
+          return false;
+        }
         const res = await update_personaldetails(userid, personalDetails);
         setLoading(false);
         if (res.status === 201) {
           toast.success(res.data);
           //setformnav(2);
           scrollToTop();
+          return true;
         } else {
           toast.error(res.data);
+          return false;
         }
       } catch (error) {
         console.log(error);
         toast.error("something wrong..");
+        return false;
       }
     } else {
       toast.error("userid not found");
+      return false;
     }
   };
   // --------------------------------------------personal details end-------------------------------------
@@ -375,22 +393,24 @@ function page() {
   };
 
   const AddressDetails_submit = async () => {
-    personalDetails_submit();
-    console.log(addressDetails);
-    try {
-      setLoading(true);
-      const res = await update_AddressDetails(userid, addressDetails);
-      setLoading(false);
-      if (res.status === 201) {
-        toast.success(res.data);
-        setformnav(2);
-        scrollToTop();
-      } else {
-        toast.error(res.data);
+    const flag = await personalDetails_submit();
+
+    if (flag) {
+      try {
+        setLoading(true);
+        const res = await update_AddressDetails(userid, addressDetails);
+        setLoading(false);
+        if (res.status === 201) {
+          toast.success(res.data);
+          setformnav(2);
+          scrollToTop();
+        } else {
+          toast.error(res.data);
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("something wrong..");
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("something wrong..");
     }
   };
   // -----------------------------------------------work details-------------------------------------------
@@ -455,6 +475,25 @@ function page() {
     let er = false;
     try {
       setLoading(true);
+      const { error } = workDetailValidate(workDetails);
+      console.log(error);
+      if (error) {
+        const errorMessage = error.details[0].message;
+        toast.error(errorMessage);
+        setLoading(false);
+        return;
+      }
+
+      for (let i = 0; i < workExperiences.length; i++) {
+        const { error } = jobDetailsValidation(workExperiences[i]);
+
+        if (error) {
+          const errorMessage = error.details[0].message;
+          toast.error(errorMessage);
+          setLoading(false);
+          return;
+        }
+      }
       const res = await update_workDetails(userid, workDetails);
       setLoading(false);
       if (res.status === 201) {
@@ -509,6 +548,14 @@ function page() {
   const bankDetails_submit = async () => {
     try {
       setLoading(true);
+      const { error } = bankValidation(bankDetails);
+
+      if (error) {
+        const errorMessage = error.details[0].message;
+        toast.error(errorMessage);
+        setLoading(false);
+        return;
+      }
       const response = await update_BankDetails(userid, bankDetails);
       setLoading(false);
       if (response.status === 201) {
@@ -576,6 +623,21 @@ function page() {
   const submit_Other_details = async () => {
     try {
       if (EducationDetail.length > 0) {
+        for (let i = 0; i < EducationDetail.length; i++) {
+          const { error } = educationValidation(EducationDetail[i]);
+          if (error) {
+            toast.error("Education : "+error.details[0].message);
+            return;
+          }
+        }
+      }
+      const { error } = emergencyContactValidation(contact);
+      if (error) {
+        toast.error(error.details[0].message);
+        return;
+      }
+
+      if (EducationDetail.length > 0) {
         setLoading(true);
         for (let i = 0; i < EducationDetail.length; i++) {
           console.log(EducationDetail[i]);
@@ -606,7 +668,7 @@ function page() {
   };
   return (
     <>
-    {loading&&<ShowFullScreenLoading/>}
+      {loading && <ShowFullScreenLoading />}
       <div className="text-sm breadcrumbs">
         <ul>
           <li className="font-semibold	">
@@ -772,7 +834,7 @@ function page() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-items-center">
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      City Type
+                      City Type<span className="text-red-400">*</span>
                     </p>
                     <select
                       name="cityType"
@@ -787,7 +849,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Father's Name
+                      Father's Name<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -800,7 +862,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Mother's Name
+                      Mother's Name<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -826,7 +888,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Gender
+                      Gender<span className="text-red-400">*</span>
                     </p>
                     <select
                       name="gender"
@@ -842,7 +904,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Date of Birth
+                      Date of Birth<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="date"
@@ -914,7 +976,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Joining Date
+                      Joining Date<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="date"
@@ -1068,7 +1130,7 @@ function page() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-items-center">
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Current Address 1
+                        Current Address 1<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1081,7 +1143,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Current Address 2
+                        Current Address 2<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1094,7 +1156,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Country
+                        Country<span className="text-red-400">*</span>
                       </p>
                       <select
                         name="country"
@@ -1112,7 +1174,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        State
+                        State<span className="text-red-400">*</span>
                       </p>
                       <select
                         name="state"
@@ -1130,7 +1192,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        City
+                        City<span className="text-red-400">*</span>
                       </p>
                       <select
                         name="city"
@@ -1149,7 +1211,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        ZIP Code
+                        ZIP Code<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1175,7 +1237,7 @@ function page() {
                     <div className="w-full"></div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Permanent Address 1
+                        Permanent Address 1<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1193,7 +1255,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Permanent Address 2
+                        Permanent Address 2<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1211,7 +1273,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Permanent Country
+                        Permanent Country<span className="text-red-400">*</span>
                       </p>
                       <select
                         name="permanentCountry"
@@ -1234,7 +1296,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Permanent State
+                        Permanent State<span className="text-red-400">*</span>
                       </p>
                       <select
                         name="permanentState"
@@ -1263,7 +1325,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Permanent City
+                        Permanent City<span className="text-red-400">*</span>
                       </p>
                       <select
                         name="permanentCity"
@@ -1293,7 +1355,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Permanent ZIP Code
+                        Permanent ZIP Code<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1388,7 +1450,7 @@ function page() {
                       className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
                     />
                   </div>
-                  <div className="w-full">
+                  {/* <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                       Employee Code
                     </p>
@@ -1400,10 +1462,10 @@ function page() {
                       value={workDetails.employeeCode}
                       className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
                     />
-                  </div>
+                  </div> */}
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Leave Rule
+                      Leave Rule<span className="text-red-400">*</span>
                     </p>
                     <select
                       name="leaveRule"
@@ -1419,7 +1481,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Reporting Manager
+                      Reporting Manager<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -1432,20 +1494,22 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Shift
+                      Shift<span className="text-red-400">*</span>
                     </p>
-                    <input
-                      type="text"
+                    <select
                       name="shift"
                       placeholder="Shift"
                       onChange={handleWorkDetailsChange}
                       value={workDetails.shift}
                       className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
-                    />
+                    >
+                      <option>Please select</option>
+                      <option value="Day">Day</option>
+                    </select>
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Department
+                      Department<span className="text-red-400">*</span>
                     </p>
                     {/* Assuming departmentOptions is an array of department options */}
                     <select
@@ -1464,7 +1528,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Designation
+                      Designation<span className="text-red-400">*</span>
                     </p>
                     <select
                       name="designation"
@@ -1495,7 +1559,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Employee Type
+                      Employee Type<span className="text-red-400">*</span>
                     </p>
                     <select
                       name="employeeType"
@@ -1513,7 +1577,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Company
+                      Company<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -1526,7 +1590,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Location
+                      Location<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -1565,7 +1629,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Probation Status
+                      Probation Status<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -1616,7 +1680,7 @@ function page() {
                       >
                         <div className="w-full">
                           <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                            Previous Company Name
+                            Previous Company Name<span className="text-red-400">*</span>
                           </p>
                           <input
                             type="text"
@@ -1631,7 +1695,7 @@ function page() {
                         </div>
                         <div className="w-full">
                           <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                            Job Title
+                            Job Title<span className="text-red-400">*</span>
                           </p>
                           <input
                             type="text"
@@ -1646,7 +1710,7 @@ function page() {
                         </div>
                         <div className="w-full">
                           <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                            From Date
+                            From Date<span className="text-red-400">*</span>
                           </p>
                           <input
                             type="date"
@@ -1660,7 +1724,7 @@ function page() {
                         </div>
                         <div className="w-full">
                           <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                            To Date
+                            To Date<span className="text-red-400">*</span>
                           </p>
                           <input
                             type="date"
@@ -1747,7 +1811,7 @@ function page() {
 
                   <br />
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-items-center">
-                    <div className="w-full">
+                    {/* <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                         Payment Type
                       </p>
@@ -1765,10 +1829,10 @@ function page() {
                         <option value="CASH">CASH</option>
                         <option value="CHEQUE">CHEQUE</option>
                       </select>
-                    </div>
+                    </div> */}
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Bank Name
+                        Bank Name<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1781,7 +1845,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Account Number
+                        Account Number<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1794,7 +1858,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        IFSC Code
+                        IFSC Code<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1807,7 +1871,7 @@ function page() {
                     </div>
                     <div className="w-full">
                       <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                        Account Holder Name
+                        Account Holder Name<span className="text-red-400">*</span>
                       </p>
                       <input
                         type="text"
@@ -1902,7 +1966,7 @@ function page() {
                         <div className="grid grid-cols-1 mt-2 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-items-center">
                           <div className="w-full">
                             <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                              Diploma/Degree Name
+                              Diploma/Degree Name<span className="text-red-400">*</span>
                             </p>
                             <input
                               type="text"
@@ -1915,7 +1979,7 @@ function page() {
                           </div>
                           <div className="w-full">
                             <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                              Institute Name
+                              Institute Name<span className="text-red-400">*</span>
                             </p>
                             <input
                               type="text"
@@ -1928,10 +1992,10 @@ function page() {
                           </div>
                           <div className="w-full">
                             <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                              Passing Year
+                              Passing Year<span className="text-red-400">*</span>
                             </p>
                             <input
-                              type="text"
+                              type="date"
                               name="passingYear"
                               placeholder="Passing Year"
                               value={edurecord.passingYear}
@@ -1941,7 +2005,7 @@ function page() {
                           </div>
                           <div className="w-full">
                             <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                              Percentage
+                              Percentage<span className="text-red-400">*</span>
                             </p>
                             <input
                               type="text"
@@ -1971,7 +2035,7 @@ function page() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-items-center">
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Name
+                      Name<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -1984,7 +2048,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Address
+                      Address<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -1997,7 +2061,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Mobile Number
+                      Mobile Number<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -2010,7 +2074,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Relationship
+                      Relationship<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="text"
@@ -2023,7 +2087,7 @@ function page() {
                   </div>
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Email
+                      Email<span className="text-red-400">*</span>
                     </p>
                     <input
                       type="email"

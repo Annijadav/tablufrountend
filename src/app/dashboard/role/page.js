@@ -4,6 +4,7 @@ import {
   deleteRole,
   updateRole,
 } from "@/helpers/Services/Role_services";
+import { jwtDecode } from "jwt-decode";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -17,10 +18,11 @@ function page() {
   const [editedRoleName, setEditedRoleName] = useState("");
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [overlayVisibleDelete, setOverlayVisibleDelete] = useState(false);
+  const [decode, setDecode] = useState(false);
 
-  const getRoleList = async () => {
+  const getRoleList = async (companyId) => {
     try {
-      const res = await getRoles();
+      const res = await getRoles(companyId);
       console.log("Response:", res);
       if (res.status === 200) {
         setroles_data(res.data);
@@ -35,7 +37,15 @@ function page() {
   };
 
   useEffect(() => {
-    getRoleList();
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      const decoded = jwtDecode(token);
+      getRoleList(decoded.companyId);
+      setDecode(decoded);
+    } else {
+      console.log("Token not found");
+      route
+    }
   }, []);
 
   const handleDelete = async (roleId) => {

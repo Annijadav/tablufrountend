@@ -176,7 +176,7 @@ function page() {
         </ul>
       </div>
       <div class="card overflow-hidden">
-        <div class="card-body">
+        <div class="card-body p-2 m-1">
           <div class="flex justify-between items-center">
             <h3 class="text-lg font-semibold">Employee List</h3>
             <div className="flex items-center">
@@ -220,7 +220,7 @@ function page() {
 
           <hr />
           <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center mb-4 md:mb-0 md:w-auto w-full">
+            <div className="flex overflow-auto items-center mb-4 md:mb-0 md:w-auto w-full">
               <div>
                 <label className="input input-bordered flex items-center gap-2">
                   <input

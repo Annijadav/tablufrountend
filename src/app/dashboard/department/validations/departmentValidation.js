@@ -1,10 +1,23 @@
 import Joi from 'joi';
 
+const customJoi = Joi.extend((joi) => ({
+    type: "objectId",
+    base: joi.string(),
+    messages: {
+      "objectId.base": "Invalid ObjectId format",
+    },
+    validate(value, helpers) {
+      if (!ObjectId.isValid(value)) {
+        return { value, errors: helpers.error("objectId.base") };
+      }
+    },
+  }));
+
 const schema = Joi.object({
     name: Joi.string()
       .min(2)
       .max(30)
-      .regex(/^[a-zA-Z]+$/)
+      .regex(/^[a-zA-Z\s]+$/)
       .required()
       .messages({
         "string.pattern.base": "Only alphabetic characters are allowed.",

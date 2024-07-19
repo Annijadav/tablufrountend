@@ -6,7 +6,7 @@ import {
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { validatePersonalDetails } from "../../../validations/PersonalDetailValidator";
+import { validatePersonalDetails } from "../validations/PersonalDetailValidator";
 
 function PersonalDetail({ data, userid, address }) {
   const [showProfile, setShowProfile] = useState(false);
@@ -193,21 +193,21 @@ function PersonalDetail({ data, userid, address }) {
         const res = await update_personaldetails(userid, personalDetails);
         console.log(res);
         if (res.status === 201) {
-          toast.success(res.data);
-          //setformnav(2);
+          const res1 = await update_AddressDetails(userid, addressDetails);
+
+      if (res1.status === 201) {
+        toast.success("Data Updated..");
+      } else {
+        toast.success("personal Data Updated..");
+        toast.error(res1.data);
+      }
+          
         } else {
           toast.error(res.response.data.message);
           return;
         }
 
-        const res1 = await update_AddressDetails(userid, addressDetails);
-
-      if (res1.status === 201) {
-        toast.success(res1.data);
-      } else {
-        toast.error(res1.data);
         
-      }
 
       } catch (error) {
         console.log(error);

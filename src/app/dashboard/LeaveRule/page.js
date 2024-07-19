@@ -18,6 +18,12 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Steps, Switch, Radio, Checkbox } from "antd";
 import AddNewLeaveRule from "./Component/AddNewLeaveRule";
+import {
+  validateForm,
+  validateleaveDetailForm,
+  validateLeaveRestrictionForm,
+  validateAdvanceSettingsForm,
+} from "../LeaveRule/validations/leaveRuleValdation";
 
 function page() {
   const [leaveRule_data, setLeaveRule_data] = useState(null);
@@ -38,25 +44,7 @@ function page() {
     },
     leaveDetail: {
       disbursementCycle: "",
-      // disbursementTime: "",
-      // isEnableTenureBasedOnLeaveDisbursement: "",
-      // forTenure: [
-      //   {
-      //     lessThanYear: "",
-      //     disburseLeaves: "",
-      //   },
-      // ],
       leaveCount: "",
-      // leaveCountProbation: "",
-      // isLeaveTypePaid: "",
-      // isEncashLeaveBalance: "",
-      // wantToRecoverTheExcessLeaveBalance: "",
-      // gender: "",
-      // maritalStatus: "",
-      // isCarryForwardToNextDisbursementCycle: "",
-      // isCarryForwardToNextYear: "",
-      // setMaxCarryForwardLeave: "",
-      // isLeaveDisbuseOnTenureCompletion: "",
     },
   });
   const items = [
@@ -87,9 +75,7 @@ function page() {
       },
     }));
   };
-  const handlRuleStatus = (e, id) => {
-    toast.success(id + " data-" + e.target.value);
-  };
+
   // Function to handle removing a tenure item
   const handleRemoveTenure = (indexToRemove) => {
     setEditingLeaveType((prevState) => ({
@@ -222,25 +208,36 @@ function page() {
   };
   const handleUpdateLeaveRule = async (leaveRuleId) => {
     if (leaveRuleId) {
+      if (!editingItem.leaveRuleName) {
+        toast.error("Please enter leave rule name");
+        return;
+      }
       try {
-        console.log("id", leaveRuleId);
-        console.log("editingItem", editingItem._id);
+        // console.log("id", leaveRuleId);
+        // console.log("editingItem", editingItem._id);
         setUpdateLoader(true);
-        const res = await updateLeaveRule(leaveRuleId, {
+        const error = validateForm({
           leaveRuleName: editingItem.leaveRuleName,
         });
-        if (res.status === 201) {
-          console.log("res", res);
-
-          toast.success(
-            editingItem.leaveRuleName + " leave rule updated successfully"
-          );
-          setEditingItem(res.data);
-          getLeaveTypeList(editingItem._id);
-          getRuleLeaveList();
-          toggleOverlay();
+        if (error) {
+          return toast.error(error);
         } else {
-          toast.error(res.response.data.message);
+          const res = await updateLeaveRule(leaveRuleId, {
+            leaveRuleName: editingItem.leaveRuleName,
+          });
+          if (res.status === 201) {
+            console.log("res", res);
+
+            toast.success(
+              editingItem.leaveRuleName + " leave rule updated successfully"
+            );
+            setEditingItem(res.data);
+            getLeaveTypeList(editingItem._id);
+            getRuleLeaveList();
+            toggleOverlay();
+          } else {
+            toast.error(res.response.data.message);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -298,27 +295,43 @@ function page() {
 
   const handleUpdateBasicLeaveRule = async (leaveDetailId) => {
     if (leaveDetailId) {
+      if (!editingLeaveType.basicLeave.leaveName) {
+        toast.error("Please enter leave type name");
+        return;
+      }
       try {
         console.log("id", leaveDetailId);
         console.log("editingItem", editingItem._id);
         setUpdateLoader(true);
-        const res = await updateBasicLeaveRule(editingItem._id, leaveDetailId, {
-          leaveName: editingLeaveType.basicLeave.leaveName,
-          status: editingLeaveType.basicLeave.status,
-        });
-        if (res.status === 201) {
-          console.log("res", res);
 
-          toast.success("Basic Leave Type updated successfully");
-          setEditingItem(res.data);
-          getLeaveTypeList(editingItem._id);
-          setCurrent(1);
-          setPercent(25);
-          getRuleLeaveList();
-          // setEditingLeaveType(null);
-          // toggleOverlay();
+        const error = validateForm({
+          leaveName: editingLeaveType.basicLeave.leaveName,
+        });
+        if (error) {
+          return toast.error(error);
         } else {
-          toast.error(res.response.data.message);
+          const res = await updateBasicLeaveRule(
+            editingItem._id,
+            leaveDetailId,
+            {
+              leaveName: editingLeaveType.basicLeave.leaveName,
+              status: editingLeaveType.basicLeave.status,
+            }
+          );
+          if (res.status === 201) {
+            console.log("res", res);
+
+            toast.success("Basic Leave Type updated successfully");
+            setEditingItem(res.data);
+            getLeaveTypeList(editingItem._id);
+            setCurrent(1);
+            setPercent(25);
+            getRuleLeaveList();
+            // setEditingLeaveType(null);
+            // toggleOverlay();
+          } else {
+            toast.error(res.response.data.message);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -337,49 +350,53 @@ function page() {
         console.log("id", leaveDetailId);
         console.log("editingItem", editingItem._id);
         setUpdateLoader(true);
-        const res = await updateLeaveDetailRule(
-          editingItem._id,
-          leaveDetailId,
-          {
-            disbursementCycle: editingLeaveType.leaveDetail.disbursementCycle,
-            disbursementTime: editingLeaveType.leaveDetail.disbursementTime,
-            isEnableTenureBasedOnLeaveDisbursement:
-              editingLeaveType.leaveDetail
-                .isEnableTenureBasedOnLeaveDisbursement,
-            forTenure: editingLeaveType.leaveDetail.forTenure,
-            leaveCount: editingLeaveType.leaveDetail.leaveCount,
-            leaveCountProbation:
-              editingLeaveType.leaveDetail.leaveCountProbation,
-            isLeaveTypePaid: editingLeaveType.leaveDetail.isLeaveTypePaid,
-            isEncashLeaveBalance:
-              editingLeaveType.leaveDetail.isEncashLeaveBalance,
-            wantToRecoverTheExcessLeaveBalance:
-              editingLeaveType.leaveDetail.wantToRecoverTheExcessLeaveBalance,
-            gender: editingLeaveType.leaveDetail.gender,
-            maritalStatus: editingLeaveType.leaveDetail.maritalStatus,
-            isCarryForwardToNextDisbursementCycle:
-              editingLeaveType.leaveDetail
-                .isCarryForwardToNextDisbursementCycle,
-            isCarryForwardToNextYear:
-              editingLeaveType.leaveDetail.isCarryForwardToNextYear,
-            setMaxCarryForwardLeave:
-              editingLeaveType.leaveDetail.setMaxCarryForwardLeave,
-            isLeaveDisbuseOnTenureCompletion:
-              editingLeaveType.leaveDetail.isLeaveDisbuseOnTenureCompletion,
-          }
-        );
-        if (res.status === 201) {
-          console.log("resss", res);
-          toast.success("Leave detail updated successfully");
-          setEditingItem(res.data);
-          getLeaveTypeList(editingItem._id);
-          setCurrent(2);
-          setPercent(50);
-          getRuleLeaveList();
-          // setEditingLeaveType(null);
-          // toggleOverlay();
+        const data = {
+          disbursementCycle: editingLeaveType.leaveDetail.disbursementCycle,
+          disbursementTime: editingLeaveType.leaveDetail.disbursementTime,
+          isEnableTenureBasedOnLeaveDisbursement:
+            editingLeaveType.leaveDetail.isEnableTenureBasedOnLeaveDisbursement,
+          forTenure: editingLeaveType.leaveDetail.forTenure,
+          leaveCount: editingLeaveType.leaveDetail.leaveCount,
+          leaveCountProbation: editingLeaveType.leaveDetail.leaveCountProbation,
+          isLeaveTypePaid: editingLeaveType.leaveDetail.isLeaveTypePaid,
+          isEncashLeaveBalance:
+            editingLeaveType.leaveDetail.isEncashLeaveBalance,
+          wantToRecoverTheExcessLeaveBalance:
+            editingLeaveType.leaveDetail.wantToRecoverTheExcessLeaveBalance,
+          gender: editingLeaveType.leaveDetail.gender,
+          maritalStatus: editingLeaveType.leaveDetail.maritalStatus,
+          isCarryForwardToNextDisbursementCycle:
+            editingLeaveType.leaveDetail.isCarryForwardToNextDisbursementCycle,
+          isCarryForwardToNextYear:
+            editingLeaveType.leaveDetail.isCarryForwardToNextYear,
+          setMaxCarryForwardLeave:
+            editingLeaveType.leaveDetail.setMaxCarryForwardLeave,
+          isLeaveDisbuseOnTenureCompletion:
+            editingLeaveType.leaveDetail.isLeaveDisbuseOnTenureCompletion,
+        };
+
+        const error = validateleaveDetailForm(data);
+        if (error) {
+          return toast.error(error);
         } else {
-          toast.error(res.response.data.message);
+          const res = await updateLeaveDetailRule(
+            editingItem._id,
+            leaveDetailId,
+            data
+          );
+          if (res.status === 201) {
+            console.log("resss", res);
+            toast.success("Leave detail updated successfully");
+            setEditingItem(res.data);
+            getLeaveTypeList(editingItem._id);
+            setCurrent(2);
+            setPercent(50);
+            getRuleLeaveList();
+            // setEditingLeaveType(null);
+            // toggleOverlay();
+          } else {
+            toast.error(res.response.data.message);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -398,56 +415,62 @@ function page() {
         console.log("id", leaveDetailId);
         console.log("editingItem", editingItem._id);
         setUpdateLoader(true);
-        const res = await updateLeaveRestrictionRule(
-          editingItem._id,
-          leaveDetailId,
-          {
-            probationLeavesAllowed:
-              editingLeaveType.leaveRestriction.probationLeavesAllowed,
-            probationLeaveVisibility:
-              editingLeaveType.leaveRestriction.probationLeaveVisibility,
-            noticePeriodLeavesAllowed:
-              editingLeaveType.leaveRestriction.noticePeriodLeavesAllowed,
-            roundOffLeaveBalance:
-              editingLeaveType.leaveRestriction.roundOffLeaveBalance,
-            isRestrictionWhileApplyingLeave:
-              editingLeaveType.leaveRestriction.isRestrictionWhileApplyingLeave,
-            backDatedLeaveRestriction:
-              editingLeaveType.leaveRestriction.backDatedLeaveRestriction,
-            countOfBackDatedLeaveRestriction:
-              editingLeaveType.leaveRestriction
-                .countOfBackDatedLeaveRestriction,
-            priorNoticeForFutureLeaves:
-              editingLeaveType.leaveRestriction.priorNoticeForFutureLeaves,
-            countOffutureDatedLeavesBeforeDays:
-              editingLeaveType.leaveRestriction
-                .countOffutureDatedLeavesBeforeDays,
-            isThierMaxLeavesPerMonth:
-              editingLeaveType.leaveRestriction.isThierMaxLeavesPerMonth,
-            maxLeavesPerMonth:
-              editingLeaveType.leaveRestriction.maxLeavesPerMonth,
-            leaveAvailAfterJoiningDays:
-              editingLeaveType.leaveRestriction.leaveAvailAfterJoiningDays,
-            minLeavesAtATime:
-              editingLeaveType.leaveRestriction.minLeavesAtATime,
-            isTheirLimitForConsecutiveLeave:
-              editingLeaveType.leaveRestriction.isTheirLimitForConsecutiveLeave,
-            consecutiveLeaveLimit:
-              editingLeaveType.leaveRestriction.consecutiveLeaveLimit,
-          }
-        );
-        if (res.status === 201) {
-          console.log("resss", res);
-          toast.success("Leave Restriction Type updated successfully");
-          setEditingItem(res.data);
-          getLeaveTypeList(editingItem._id);
-          setCurrent(3);
-          setPercent(75);
-          getRuleLeaveList();
-          // setEditingLeaveType(null);
-          // toggleOverlay();
+
+        const data = {
+          probationLeavesAllowed:
+            editingLeaveType.leaveRestriction.probationLeavesAllowed,
+          probationLeaveVisibility:
+            editingLeaveType.leaveRestriction.probationLeaveVisibility,
+          noticePeriodLeavesAllowed:
+            editingLeaveType.leaveRestriction.noticePeriodLeavesAllowed,
+          roundOffLeaveBalance:
+            editingLeaveType.leaveRestriction.roundOffLeaveBalance,
+          isRestrictionWhileApplyingLeave:
+            editingLeaveType.leaveRestriction.isRestrictionWhileApplyingLeave,
+          backDatedLeaveRestriction:
+            editingLeaveType.leaveRestriction.backDatedLeaveRestriction,
+          countOfBackDatedLeaveRestriction:
+            editingLeaveType.leaveRestriction.countOfBackDatedLeaveRestriction,
+          priorNoticeForFutureLeaves:
+            editingLeaveType.leaveRestriction.priorNoticeForFutureLeaves,
+          countOffutureDatedLeavesBeforeDays:
+            editingLeaveType.leaveRestriction
+              .countOffutureDatedLeavesBeforeDays,
+          isThierMaxLeavesPerMonth:
+            editingLeaveType.leaveRestriction.isThierMaxLeavesPerMonth,
+          maxLeavesPerMonth:
+            editingLeaveType.leaveRestriction.maxLeavesPerMonth,
+          leaveAvailAfterJoiningDays:
+            editingLeaveType.leaveRestriction.leaveAvailAfterJoiningDays,
+          minLeavesAtATime: editingLeaveType.leaveRestriction.minLeavesAtATime,
+          isTheirLimitForConsecutiveLeave:
+            editingLeaveType.leaveRestriction.isTheirLimitForConsecutiveLeave,
+          consecutiveLeaveLimit:
+            editingLeaveType.leaveRestriction.consecutiveLeaveLimit,
+        };
+
+        const error = validateLeaveRestrictionForm(data);
+        if (error) {
+          return toast.error(error);
         } else {
-          toast.error(res.response.data.message);
+          const res = await updateLeaveRestrictionRule(
+            editingItem._id,
+            leaveDetailId,
+            data
+          );
+          if (res.status === 201) {
+            console.log("resss", res);
+            toast.success("Leave Restriction Type updated successfully");
+            setEditingItem(res.data);
+            getLeaveTypeList(editingItem._id);
+            setCurrent(3);
+            setPercent(75);
+            getRuleLeaveList();
+            // setEditingLeaveType(null);
+            // toggleOverlay();
+          } else {
+            toast.error(res.response.data.message);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -466,43 +489,50 @@ function page() {
         console.log("id", leaveDetailId);
         console.log("editingItem", editingItem._id);
         setUpdateLoader(true);
-        const res = await updateAdvanceSettingsRule(
-          editingItem._id,
-          leaveDetailId,
-          {
-            negativeLeaveAllowed:
-              editingLeaveType.advanceSettings.negativeLeaveAllowed,
-            maxNegativeLeaveCount:
-              editingLeaveType.advanceSettings.maxNegativeLeaveCount,
-            halfDayLeaveAllowed:
-              editingLeaveType.advanceSettings.halfDayLeaveAllowed,
-            viewLeaveDetailsOnDashboard:
-              editingLeaveType.advanceSettings.viewLeaveDetailsOnDashboard,
-            viewLeaveBalanceOnDashboard:
-              editingLeaveType.advanceSettings.viewLeaveBalanceOnDashboard,
-            proofRequiredForLeaveRequest:
-              editingLeaveType.advanceSettings.proofRequiredForLeaveRequest,
-            proofRequiredExceedingDays:
-              editingLeaveType.advanceSettings.proofRequiredExceedingDays,
-            manualLeaveDisbursement:
-              editingLeaveType.advanceSettings.manualLeaveDisbursement,
-            maxLeaveAvailPerYear:
-              editingLeaveType.advanceSettings.maxLeaveAvailPerYear,
-          }
-        );
-        if (res.status === 201) {
-          console.log("resss", res);
-          toast.success("Advance Settings updated successfully");
-          setEditingItem(res.data);
-          getLeaveTypeList(editingItem._id);
-          setEditingLeaveType(null);
-          setCurrent(0);
-          setPercent(0);
-          getRuleLeaveList();
-          // setEditingLeaveType(null);
-          // toggleOverlay();
+        const data = {
+          negativeLeaveAllowed:
+            editingLeaveType.advanceSettings.negativeLeaveAllowed,
+          maxNegativeLeaveCount:
+            editingLeaveType.advanceSettings.maxNegativeLeaveCount,
+          halfDayLeaveAllowed:
+            editingLeaveType.advanceSettings.halfDayLeaveAllowed,
+          viewLeaveDetailsOnDashboard:
+            editingLeaveType.advanceSettings.viewLeaveDetailsOnDashboard,
+          viewLeaveBalanceOnDashboard:
+            editingLeaveType.advanceSettings.viewLeaveBalanceOnDashboard,
+          proofRequiredForLeaveRequest:
+            editingLeaveType.advanceSettings.proofRequiredForLeaveRequest,
+          proofRequiredExceedingDays:
+            editingLeaveType.advanceSettings.proofRequiredExceedingDays,
+          manualLeaveDisbursement:
+            editingLeaveType.advanceSettings.manualLeaveDisbursement,
+          maxLeaveAvailPerYear:
+            editingLeaveType.advanceSettings.maxLeaveAvailPerYear,
+        };
+
+        const error = validateAdvanceSettingsForm(data);
+        if (error) {
+          return toast.error(error);
         } else {
-          toast.error(res.response.data.message);
+          const res = await updateAdvanceSettingsRule(
+            editingItem._id,
+            leaveDetailId,
+            data
+          );
+          if (res.status === 201) {
+            console.log("resss", res);
+            toast.success("Advance Settings updated successfully");
+            setEditingItem(res.data);
+            getLeaveTypeList(editingItem._id);
+            setEditingLeaveType(null);
+            setCurrent(0);
+            setPercent(0);
+            getRuleLeaveList();
+            // setEditingLeaveType(null);
+            // toggleOverlay();
+          } else {
+            toast.error(res.response.data.message);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -1172,7 +1202,6 @@ function page() {
                       onChange={handleInputChanges}
                       className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full mb-3 mt-1"
                     >
-                      <option value="">Select Status</option>
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
                     </select>
@@ -1212,7 +1241,7 @@ function page() {
             {current === 1 && (
               <>
                 <b>Leave Details</b>
-                {/* {JSON.stringify(editingLeaveType)} */}
+                {JSON.stringify(editingLeaveType)}
                 <div className="flex mt-3 mb-2">
                   <span className="mb-2 w-1/2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -1290,7 +1319,7 @@ function page() {
                           <input
                             className="input focus:bg-gray-100 text-center placeholder:text-gray-200 w-8 px-1 ml-2 mr-2 input-bordered"
                             type="number"
-                            value={tenureItem?.lessThanYear || 0} // initial value
+                            value={0} // initial value
                             onChange={(e) =>
                               handleTenureInputChange(
                                 0,
@@ -1309,7 +1338,7 @@ function page() {
                             min={0}
                             max={10}
                             minLength={2}
-                            value={tenureItem?.lessThanYear || 0} // initial value
+                            value={0} // initial value
                             onChange={(e) =>
                               handleTenureInputChange(
                                 0,
