@@ -1,8 +1,8 @@
 import apis from "../Api";
 
-export async function getRoles(companyId) {
+export async function getRoles() {
   return await apis
-    .get(`/role/roles/${companyId}`)
+    .get(`/role/roles`)
     .then((response) => {
       return response;
     })
