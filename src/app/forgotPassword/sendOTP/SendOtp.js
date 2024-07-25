@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import { getSendOTP } from "@/helpers/Services/Auth_services";
 import { toast } from "react-toastify";
 
-function SendOtp({setStep,setEmail,email}) {
+function SendOtp({setStep,setEmail,email,setLoading}) {
   
-
+  
   const [tempEmail,setTempEmail] = useState("");
   
 
@@ -25,7 +25,9 @@ function SendOtp({setStep,setEmail,email}) {
     }
 
     try {
+      setLoading(true);
       const res = await getSendOTP({ email: tempEmail });
+      setLoading(false)
       if (res.status === 201) {
         toast.success("Send OTP Successfully");
         setStep(2);
@@ -41,6 +43,7 @@ function SendOtp({setStep,setEmail,email}) {
 
   return (
     <>
+    
       <div
         className="page-wrapper"
         id="main-wrapper"

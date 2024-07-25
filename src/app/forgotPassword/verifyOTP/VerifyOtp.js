@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { Flex, Input } from "antd";
 
-function VerifyOtp({setStep,setEmail,email}) {
+function VerifyOtp({setStep,setEmail,email,setLoading}) {
   const router = useRouter();
   const onChange = (text) => {
     console.log("onChange:", text);
@@ -33,7 +33,9 @@ function VerifyOtp({setStep,setEmail,email}) {
     }
 
     try {
+      setLoading(true)
       const res = await getVerifyOTP({ otp: otp });
+      setLoading(false)
       if (res.status === 201) {
         toast.success("Verify OTP Successfully");
         setStep(3);
@@ -104,8 +106,10 @@ function VerifyOtp({setStep,setEmail,email}) {
                         variant="filled"
                         className="rounded border border-red text-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         size="small"
+                        inputMode="numeric"
                         length={6}
                         {...sharedProps}
+
                       />
                     </Flex>
 

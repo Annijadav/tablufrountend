@@ -5,7 +5,7 @@ import { getResetPassword } from "@/helpers/Services/Auth_services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-function ResetPassword({setStep,setEmail,email}) {
+function ResetPassword({setStep,setEmail,email,setLoading}) {
   const [form, setForm] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -50,9 +50,9 @@ function ResetPassword({setStep,setEmail,email}) {
         newPassword: newPassword,
         confirmPassword: confirmPassword,
       };
-      
+      setLoading(true)
       const res = await getResetPassword(data);
-
+      setLoading(false)
       if (res.status === 201) {
         toast.success("Reset Password Successful");
         redirectToLogin();
