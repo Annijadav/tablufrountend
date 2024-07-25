@@ -1,8 +1,9 @@
 "use client"
 import React, { useState } from 'react'
-import SendOtp from './sendOTP/sendOtp'
+
 import VerifyOtp from './verifyOTP/VerifyOtp'
 import ResetPassword from './resetPassword/ResetPassword'
+import SendOtp from './sendOTP/SendOtp'
 
 export default function page() {
   const [step,setStep] = useState(1)
