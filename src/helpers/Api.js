@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const URL = "http://localhost:5000/api";
+export const URL = "https://tabluapi.vercel.app/api";
 
 // Create an axios instance
 const axioInstance = axios.create({
