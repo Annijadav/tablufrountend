@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import { getSendOTP } from "@/helpers/Services/Auth_services";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
-import { settoken } from "@/app/login/setCookie";
 
 function SendOtp({setStep,setEmail,email}) {
   

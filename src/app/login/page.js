@@ -200,7 +200,7 @@ function page() {
                           Remeber Me
                         </label>
                       </div>
-                      <a className="text-primary fw-bold" href="forgotPassword/sendOTP">
+                      <a className="text-primary fw-bold" href="forgotPassword">
                         Forgot Password ?
                       </a>
                     </div>
