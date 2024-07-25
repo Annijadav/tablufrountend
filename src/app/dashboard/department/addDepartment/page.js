@@ -4,6 +4,7 @@ import { getAddDepartment } from "@/helpers/Services/Department_services";
 import { getFullname } from "@/helpers/Services/user_services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 import { validateForm } from "../../department/validations/departmentValidation";
 
 function Page() {
@@ -12,12 +13,20 @@ function Page() {
     name: "",
     departmentManager: "",
   });
+  const [decode, setDecode] = useState("");
 
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     // Fetch users when component mounts
     fetchUsers();
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      const decoded = jwtDecode(token);
+      setDecode(decoded);
+    } else {
+      console.log("Token not found");
+    }
   }, []);
 
   const fetchUsers = async () => {
@@ -61,6 +70,7 @@ function Page() {
       const data = {
         name: department.name,
         departmentManager: department.departmentManager,
+        company : decode.companyId
       };
       const error = validateForm(data);
       if (error) {

@@ -12,6 +12,16 @@ export async function getDepartmentPagination(currentPage, recordsPerPage) {
   }
 }
 
+// export async function getDepartmentPaginationByCompanyId(currentPage, recordsPerPage, companyId) {
+//   try {
+//     const response = await apis.get(`/department/getdepartments/${currentPage}/${recordsPerPage}/${companyId}`);
+//     return response;
+//   } catch (error) {
+//     console.error("Error fetching department data:", error);
+//     return { department_data: [], totalPages: 0 }; // Return empty data and 0 totalPages in case of error
+//   }
+// }
+
 export async function getAllDepartment(data) {
   try {
     const response = await apis.put(`/department/getAlldepartment`,data);

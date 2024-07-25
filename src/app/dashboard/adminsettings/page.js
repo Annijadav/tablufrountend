@@ -4,6 +4,7 @@ import Basic_setting from "./compoment/Basic_setting";
 import Users_setting from "./compoment/Users_setting";
 import Department_setting from "./compoment/Department_setting";
 import Designation_setting from "./compoment/Designation_setting";
+import withRole from "@/components/withRole";
 
 function page() {
   const [detail, setdetail] = useState(1);
@@ -43,4 +44,4 @@ function page() {
   );
 }
 
-export default page;
+export default withRole(page, ['Admin']);

@@ -58,6 +58,16 @@ export async function deleteLeave(id) {
   }
 }
 
+export async function createLeaveBalancesForUser(userId) {
+  try {
+    const response = await apis.put(`/leave/createLeaveBalance/${userId}`);
+    return response;
+  } catch (error) {
+    toast.error(error.message);
+    return error;
+  }
+}
+
 export async function getOneLeave(userId) {
   try {
     const response = await apis.get(`/leave/viewLeave/${userId}`);
@@ -138,6 +148,17 @@ export async function getLeaveRules() {
       return error;
     });
 }
+
+// export async function getLeaveRulesByCompanyId(companyId) {
+//   return await apis
+//     .get(`/leaveRule/leaveRules/${companyId}`)
+//     .then((response) => {
+//       return response;
+//     })
+//     .catch((error) => {
+//       return error;
+//     });
+// }
 
 export async function deleteLeaveRule(id) {
   try {

@@ -12,6 +12,17 @@ export async function getAllDesignation() {
   }
 }
 
+// export async function getAllDesignationByCompanyId(companyId) {
+//   try {
+//     const response = await apis.get(`/designation/getDesignations/${companyId}`);
+//     console.log(response);
+//     return response;
+//   } catch (error) {
+//     toast.error(error);
+//     return error;
+//   }
+// }
+
 export async function getAddDesignation(data) {
   try {
     const response = await apis.post(`/designation/addDesignation`, data);

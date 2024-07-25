@@ -6,6 +6,7 @@ import {
 } from "@/helpers/Services/Department_services";
 import { getFullname } from "@/helpers/Services/user_services";
 import Link from "next/link";
+import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Pagination } from "antd";
@@ -25,6 +26,7 @@ function page() {
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [overlayVisibleDelete, setOverlayVisibleDelete] = useState(false);
+  const [decode, setDecode] = useState("");
 
   const getDepartmentList = async (currentPage, recordsPerPage) => {
     try {
@@ -65,7 +67,7 @@ function page() {
     try {
       const res = await deleteDepartment(departmentId);
       if (res.status === 200) {
-        getDepartmentList();
+        getDepartmentList(currentPage, recordsPerPage);
         toast.success("Record deleted successfully");
         setEditingItem(null);
         toggleOverlayDelete();
@@ -109,7 +111,7 @@ function page() {
           const res = await updateDepartment(id, data);
           if (res.status === 201) {
             console.log("res", res);
-            getDepartmentList();
+            getDepartmentList(currentPage, recordsPerPage);
             toast.success("Department updated successfully");
             setEditingItem(null);
             toggleOverlay();
@@ -245,7 +247,7 @@ function page() {
                 responsive
                 pageSize={recordsPerPage}
                 onChange={(current, pageSize) =>
-                  handlePageChange(current, pageSize)
+                  handlePageChange(current, pageSize, decode.companyId)
                 }
               />
             </div>

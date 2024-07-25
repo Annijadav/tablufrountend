@@ -5,6 +5,9 @@ import {
   addemployee,
   update_BasicDetails,
 } from "@/helpers/Services/Employee_services";
+import {
+  createLeaveBalancesForUser
+} from "@/helpers/Services/Leave_services";
 import { toast } from "react-toastify";
 import JoiSchema from "../validations/basicValidation";
 
@@ -37,6 +40,7 @@ function BasicDetail({ data, roles_data, uid }) {
         setOverlayVisible(false);
 
         if (res?.status === 200) {
+          // await createLeaveBalancesForUser(uid);
           toast.success(res.data.message);
         } else {
           toast.error(res.response.data.message);

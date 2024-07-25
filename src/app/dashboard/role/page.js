@@ -20,9 +20,9 @@ function page() {
   const [overlayVisibleDelete, setOverlayVisibleDelete] = useState(false);
   const [decode, setDecode] = useState(false);
 
-  const getRoleList = async (companyId) => {
+  const getRoleList = async () => {
     try {
-      const res = await getRoles(companyId);
+      const res = await getRoles();
       console.log("Response:", res);
       if (res.status === 200) {
         setroles_data(res.data);
@@ -37,15 +37,7 @@ function page() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      const decoded = jwtDecode(token);
-      getRoleList(decoded.companyId);
-      setDecode(decoded);
-    } else {
-      console.log("Token not found");
-      route
-    }
+    getRoleList();
   }, []);
 
   const handleDelete = async (roleId) => {

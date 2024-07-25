@@ -10,9 +10,21 @@ export async function getRoles() {
       return error;
     });
 }
+
+// export async function getRoleByCompanyId(companyId) {
+//   return await apis
+//     .get(`/role/roles/${companyId}`)
+//     .then((response) => {
+//       return response;
+//     })
+//     .catch((error) => {
+//       return error;
+//     });
+// }
+
 export async function getRoleById(roleid) {
   return await apis
-    .get(`/role/roles/${roleid}`)
+    .get(`/role/role/${roleid}`)
     .then((response) => {
       return response;
     })
@@ -20,6 +32,17 @@ export async function getRoleById(roleid) {
       return error;
     });
 }
+
+// export async function getRoleById() {
+//   return await apis
+//     .get(`/role/roles`)
+//     .then((response) => {
+//       return response;
+//     })
+//     .catch((error) => {
+//       return error;
+//     });
+// }
 
 export async function deleteRole(id) {
   try {

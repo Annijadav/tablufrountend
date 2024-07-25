@@ -23,9 +23,16 @@ function page() {
       
     }, 3000); // 2000 milliseconds = 2 seconds
   }
-
+  const handleKeyPress = async(event)=>{
+    console.log(event);
+    if(event.key === "Enter")
+    {
+      handleLogin();
+    }
+  }
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
     setform((prevData) => ({
       ...prevData,
       [name]: value,
@@ -66,6 +73,9 @@ function page() {
             await localStorage.setItem("lastName", decoded.lastName);
             const rolename = decoded.rolename;
             if (rolename === "Admin") {
+              redirectToDash();
+            }else if( rolename === "HR"){
+              console.log("Hello Hr");
               redirectToDash();
             } else if (rolename === "Employee") {
               redirectToMyDash();
@@ -169,6 +179,7 @@ function page() {
                         className="form-control"
                         value={form.password}
                         name="password"
+                        onKeyPress={handleKeyPress}
                         placeholder="Enter a Password"
                         id="exampleInputPassword1"
                         onChange={handleInputChange}

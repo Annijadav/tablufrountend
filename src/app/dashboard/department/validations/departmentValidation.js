@@ -23,7 +23,7 @@ const schema = Joi.object({
         "string.pattern.base": "Only alphabetic characters are allowed.",
       }),
     departmentManager: Joi.not(),
-  });
+  }).unknown(true);
 
   const validateForm = (data) => {
     const { error } = schema.validate(data);

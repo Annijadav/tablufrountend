@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {btnLogout} from './Logout'
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, User} from "@nextui-org/react";
+import { isauth } from '@/helpers/Services/user_services';
+import { toast } from 'react-toastify';
 function TopNav() {
   
   const router = useRouter();
@@ -30,6 +32,26 @@ function TopNav() {
         {
           router.push(key);
         }
+  }
+  useEffect(()=>{
+    checkIsAuth();
+  },[])
+  const checkIsAuth = async () =>{
+    try
+    {
+      const res = await isauth();
+      if(res.status !== 200)
+      {
+        toast.error(res.response.data.message);
+        toast.error("Logging Out...");
+        handleLogout();
+        
+        
+      }
+    }catch(error)
+    {
+      toast.error("internal error")
+    }
   }
   return (
     <header className="app-header shadow-sm">

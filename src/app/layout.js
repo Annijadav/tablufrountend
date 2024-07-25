@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="/assets/css/styles.min.css" />
         
       </head>
-      <body className={inter.className}  suppressHydrationWarning={false}>
+      <body className={inter.className }  suppressHydrationWarning={false}>
         {children}
         <ToastContainer position="bottom-left" autoClose={1500}/>
         <script src="/assets/libs/jquery/dist/jquery.min.js"></script>

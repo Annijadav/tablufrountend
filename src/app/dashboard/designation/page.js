@@ -8,6 +8,7 @@ import {
 } from "@/helpers/Services/Designation_services";
 import { validateForm } from "../designation/validations/designationValidation";
 import Link from "next/link";
+import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -139,20 +140,20 @@ function page() {
     }));
   };
 
-  const getDepartmentById = (departmentId) => {
-    const department = department_data.find(
-      (department) => department._id === departmentId
-    );
-    return department ? department.name : "Unknown";
-  };
+  // const getDepartmentById = (departmentId) => {
+  //   const department = department_data.find(
+  //     (department) => department._id === departmentId
+  //   );
+  //   return department ? department.name : "Unknown";
+  // };
 
-  const toggleOverlay = () => {
-    setOverlayVisible(!overlayVisible);
-  };
+  // const toggleOverlay = () => {
+  //   setOverlayVisible(!overlayVisible);
+  // };
 
-  const toggleOverlayDelete = () => {
-    setOverlayVisibleDelete(!overlayVisibleDelete);
-  };
+  // const toggleOverlayDelete = () => {
+  //   setOverlayVisibleDelete(!overlayVisibleDelete);
+  // };
 
   return (
     // to show data in tree structure
@@ -260,7 +261,7 @@ function page() {
               </button>
             </div>
             <h4 className="text-lg font-semibold mb-2">Designation Details</h4>
-            {/* {JSON.stringify(editingItem)} */}
+            {JSON.stringify(editingItem)}
             <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
               Name
             </p>

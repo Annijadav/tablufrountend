@@ -13,6 +13,7 @@ import React, { useEffect, useId, useState } from "react";
 import { toast } from "react-toastify";
 import { workDetailValidate } from "../validations/workDetailValidation";
 import { jobDetailsValidation } from "../validations/jobDetailsValidation";
+import { Checkbox } from "@nextui-org/react";
 
 function WorkDetail({ data, refreshdata, workXp, userid }) {
   //console.log(workXp);
@@ -79,11 +80,11 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
   const [workDetails, setWorkDetails] = useState({
     officeLandlineNumber: data?.officeLandlineNumber,
     employeeCode: data?.employeeCode,
-    leaveRule: data?.leaveRule,
+    leaveRule: data?.leaveRule._id,
     reportingManager: data?.reportingManager,
     shift: data?.shift,
-    department: data?.department,
-    designation: data?.designation,
+    department: data?.department._id,
+    designation: data?.designation._id,
     grade: data?.grade,
     employeeType: data?.employeeType,
     company: data?.company,
@@ -277,6 +278,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <br />
           <h4>Work Details</h4>
+           {JSON.stringify(workDetails)}
           <hr />
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 justify-items-center">
             <div className="w-full">
@@ -309,11 +311,28 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                 Leave Rule
               </p>
-
+              <div className="flex"> <label htmlFor="custom-checkbox" className="flex items-center cursor-pointer">
+        <span className="w-5 h-5 inline-block border-2 border-gray-700 rounded-sm mr-2 bg-white transition-colors duration-200 ease-in-out checked:border-blue-500 checked:bg-blue-500 flex justify-center items-center">
+          {1 && (
+            <svg
+              className="w-4 h-4 text-white"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          )}
+        </span>
+        Enable
+      </label>
               <select
                 name="leaveRule"
                 onChange={handleWorkDetailsChange}
-                value={workDetails.leaveRule._id}
+                value={workDetails.leaveRule}
                 className="select input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
               >
                 <option>please select</option>
@@ -321,6 +340,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
                   <option value={rule?._id}>{rule.leaveRuleName}</option>
                 ))}
               </select>
+              </div>
             </div>
             <div className="w-full">
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
@@ -358,7 +378,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
               <select
                 name="department"
                 onChange={handleWorkDetailsChange}
-                value={workDetails.department._id}
+                value={workDetails.department}
                 className="select input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
               >
                 <option value={""}>Please Select</option>
@@ -376,7 +396,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
               <select
                 name="designation"
                 onChange={handleWorkDetailsChange}
-                value={workDetails.designation._id}
+                value={workDetails.designation}
                 className="select input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
               >
                 <option value={""}>Please Select</option>
@@ -418,7 +438,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
                 <option value="Freelancer">Freelancer</option>
               </select>
             </div>
-            <div className="w-full">
+            {/* <div className="w-full">
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                 Company
               </p>
@@ -430,7 +450,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
                 value={workDetails.company}
                 className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
               />
-            </div>
+            </div> */}
             <div className="w-full">
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                 Location

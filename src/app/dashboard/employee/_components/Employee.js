@@ -20,6 +20,7 @@ const Employee = ({
   handleFilter,
   sortBy,
   sortOrder,
+  getEmpList,
 }) => {
   const startIndex = (currentPage - 1) * postPerPage + 1;
   const [showProfile, setShowProfile] = useState(false);
@@ -50,10 +51,11 @@ const Employee = ({
         try
         {
           const res = await terminateUser(uid,{terminate:true});
-          console.log(res.data);
+          
           if(res.status == 200)
             {
               toast.success(res.data?.message);
+              getEmpList();
             }
             else{
               toast.error(res.response.data.message);

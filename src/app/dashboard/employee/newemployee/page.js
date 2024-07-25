@@ -219,7 +219,6 @@ function page() {
         setLoading(false);
         if (res?.status === 200) {
           await setuserid(res.data.userid);
-          ss;
           setBasicDetails({
             firstName: "",
             lastName: "",
@@ -1575,19 +1574,7 @@ function page() {
                       <option value="Freelancer">Freelancer</option>
                     </select>
                   </div>
-                  <div className="w-full">
-                    <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
-                      Company<span className="text-red-400">*</span>
-                    </p>
-                    <input
-                      type="text"
-                      name="company"
-                      placeholder="Company"
-                      onChange={handleWorkDetailsChange}
-                      value={workDetails.company}
-                      className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
-                    />
-                  </div>
+                 
                   <div className="w-full">
                     <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                       Location<span className="text-red-400">*</span>

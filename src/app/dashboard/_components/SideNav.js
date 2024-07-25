@@ -47,7 +47,7 @@ function SideNav() {
             <ul id="sidebarnav">
               <li className="nav-small-cap">
                 <i className="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span className="hide-menu text-blue-500">
+                <span className="hide-menu text-blue-500 whitespace-nowrap">
                 Welcome, {decode.firstName} {decode.lastName}
                 </span>
               </li>
@@ -282,6 +282,22 @@ function SideNav() {
                   </span>
                 </li>
               </Link>
+              {decode.rolename === "Admin" && <Link href="/dashboard/adminsettings">
+                <li className="sidebar-item">
+                  <span
+                    className={`sidebar-link ${
+                      pathname.startsWith("/dashboard/adminsettings") && "active"
+                    }`}
+                    href="sample-page.html"
+                    aria-expanded="false"
+                  >
+                    <span>
+                      <i className="ti ti-aperture"></i>
+                    </span>
+                    <span className="hide-menu">Admin Settings</span>
+                  </span>
+                </li>
+              </Link>}
               {/*  <li className="sidebar-item">
               <span className="sidebar-link" href="ui-forms.html" aria-expanded="false">
                 <span>

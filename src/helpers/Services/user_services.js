@@ -10,6 +10,14 @@ export const getUsers = async () => {
     }
   };
 
+  export const isauth=async()=>{
+    try{
+      return await apis.post("/isauth");
+    }catch(error)
+    {
+      return error;
+    }
+  }
   export const getFullname = async () => {
     try {
       const response = await apis.get("/fullNames"); // Assuming you have an endpoint to fetch users

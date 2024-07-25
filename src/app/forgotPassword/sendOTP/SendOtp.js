@@ -1,58 +1,42 @@
-"use client";
+"use client"
 
-import React, { useEffect, useState } from "react";
-import { getVerifyOTP } from "@/helpers/Services/Auth_services";
+import React, { useState } from "react";
+import { getSendOTP } from "@/helpers/Services/Auth_services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { Flex, Input } from "antd";
+import { settoken } from "@/app/login/setCookie";
 
-function Page() {
-  const router = useRouter();
-  const onChange = (text) => {
-    console.log("onChange:", text);
-    setOTP(text);
-  };
-  const sharedProps = {
-    onChange,
-  };
+function SendOtp({setStep,setEmail,email}) {
+  
 
-  const [otp, setOTP] = useState("");
+  const [tempEmail,setTempEmail] = useState("");
+  
 
-  const redirectToVerifyOTP = () => {
-    setTimeout(() => {
-      router.push("/forgotPassword/resetPassword");
-    }, 1000);
-  };
-  useEffect(() => {
-    if (localStorage.getItem("step") !== 1) {
-      router.push("/login");
-    }
+  
 
-    // const handleInputChange = (e) => {
-    //   const { name, value } = e.target;
-    //   setOTP(value); // Update the state of otp
-    // };
-  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setOTP(value); // Update the state of otp
+    setTempEmail(value);
+    setEmail(value)
   };
 
-  const handleVerifyOTP = async () => {
-    if (!otp || otp.length !== 6 || !/^\d+$/.test(otp)) {
-      // Check if OTP is not entered or not of length 6 or not numeric
-      toast.error("Please Enter a valid six digit OTP");
+  const handleSendOTP = async () => {
+    if (!tempEmail) {
+      toast.error("Please Enter Your valid Email ID");
       return;
     }
 
     try {
-      const res = await getVerifyOTP({ otp: otp });
+      const res = await getSendOTP({ email: tempEmail });
       if (res.status === 201) {
-        toast.success("Verify OTP Successfully");
-        redirectToVerifyOTP();
+        toast.success("Send OTP Successfully");
+        setStep(2);
+      }
+      else{
+        toast.error(res.response.data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error("Internal server ");
       console.log(error);
     }
   };
@@ -86,44 +70,34 @@ function Page() {
                       <br />
                       <br />
                       <p className="text-2xl font-bold mb-6">
-                        Enter received OTP for password reset
+                        Enter Email to receive an OTP for password reset
                       </p>
                     </div>
 
-                    {/* <div className="mb-3">
+                    <div className="mb-3">
                       <label
                         htmlFor="exampleInputEmail1"
                         className="form-label"
                       >
-                        OTP
+                        Email
                       </label>
                       <input
                         type="text"
                         className="form-control"
                         id="exampleInputEmail1"
                         aria-describedby="emailHelp"
-                        value={otp}
-                        name="otp"
-                        placeholder="Enter your six digit OTP"
-                        // onChange={handleInputChange}
+                        value={email}
+                        name="email"
+                        placeholder="Enter your valid Email ID"
+                        onChange={handleInputChange}
                       />
-                    </div> */}
-                    <Flex className="mb-3 px-5 gap-8 items-center flex-col">
-                      {/* <Title level={5}>Enter received OTP for password reset</Title> */}
-                      <Input.OTP
-                        variant="filled"
-                        className="rounded border border-red text-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        size="small"
-                        length={6}
-                        {...sharedProps}
-                      />
-                    </Flex>
+                    </div>
 
                     <button
-                      onClick={handleVerifyOTP}
+                      onClick={handleSendOTP}
                       className="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2"
                     >
-                      Verify OTP
+                      Send OTP
                     </button>
                   </div>
                 </div>
@@ -136,4 +110,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default SendOtp;

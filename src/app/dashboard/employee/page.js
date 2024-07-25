@@ -147,6 +147,7 @@ function page() {
     const res = await update_employeeStatus(id, { Status: newStatus });
     if (res.status === 200) {
       toast.success(res.data.message);
+      getEmpList();
     }
     // Update the employee status in the backend using the newStatus value
   };
@@ -270,6 +271,7 @@ function page() {
                 handleFilter={handleFilter}
                 sortBy={sortBy}
                 sortOrder={sortOrder}
+                getEmpList={getEmpList}
               />
               <Pagination
                 currentPage={currentPage}

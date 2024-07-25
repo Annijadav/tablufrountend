@@ -18,7 +18,9 @@ export async function middleware(request) {
     }
   }
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
-    if (rolename != "Admin") {
+    console.log("Accessing Dashboard soon...");
+    if (rolename != "Admin" && rolename != "HR") {
+      console.log("redirecting You...");
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }

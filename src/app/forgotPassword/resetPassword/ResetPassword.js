@@ -5,7 +5,7 @@ import { getResetPassword } from "@/helpers/Services/Auth_services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-function Page() {
+function ResetPassword({setStep,setEmail,email}) {
   const [form, setForm] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -41,16 +41,16 @@ function Page() {
       return;
     }
 
-    const email = await localStorage.getItem("authToken" || "");
-    console.log("eaaa",email);
+    
+    
 
     try {
       const data = {
-        email: email,
+        userEmail: email,
         newPassword: newPassword,
         confirmPassword: confirmPassword,
       };
-
+      
       const res = await getResetPassword(data);
 
       if (res.status === 201) {
@@ -152,4 +152,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default ResetPassword;
