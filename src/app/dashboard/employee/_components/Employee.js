@@ -93,7 +93,7 @@ const Employee = ({
     <div  key={refreshKey}>
       {emp ? (
         <div>
-          <div className="overflow-x-auto">
+          <div className="overflow-auto">
             <table className="w-full table-auto border rounded bg-gray-200 divide-y divide-gray-300">
               <thead className="bg-blue-600 text-white">
                 <tr>
@@ -285,6 +285,7 @@ const Employee = ({
                     <td className="py-1 px-2">
                       <label className="inline-flex items-center me-5 cursor-pointer">
                         <Popconfirm
+                        placement="topRight"
                           title="Change employee status"
                           description="Are you sure you want to change the status?"
                           okText="Yes"

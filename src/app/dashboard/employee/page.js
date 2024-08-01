@@ -186,7 +186,7 @@ function page() {
           <li>Employees </li>
         </ul>
       </div>
-      <div class={showFullScreen?"fixed inset-0 z-50 bg-white overflow-auto": "card overflow-hidden"}>
+      <div class={showFullScreen?"fixed inset-0 z-50 bg-white w-full overflow-auto": "card w-full "}>
         <div class="card-body p-2 m-1">
           <div class="flex justify-between items-center">
             <h3 class="text-lg font-semibold">Employee List</h3>
@@ -274,7 +274,7 @@ function page() {
             <FilterEmployee handleEmloyeeFilters={handleEmloyeeFilters} />
           )}
           {emp ? (
-            <div>
+            <div className="w-full">
               <Employee
                 emp={emp}
                 currentPage={currentPage}

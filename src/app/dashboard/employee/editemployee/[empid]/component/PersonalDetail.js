@@ -181,7 +181,7 @@ function PersonalDetail({ data, userid, address }) {
   const personalDetails_submit = async () => {
     if (userid) {
       try {
-        console.log(personalDetails);
+        // console.log(personalDetails);
         const { error } = validatePersonalDetails(personalDetails);
         console.log(error);
         if (error) {
@@ -388,13 +388,13 @@ function PersonalDetail({ data, userid, address }) {
                       <img
                         onClick={() =>
                           openProfileImageView(
-                            `http://localhost:5000/uploads/profile/${data?.profileImage}`
+                            `${data?.profileImage}`
                           )
                         }
                         className="h-12 w-12 mr-2 rounded-full object-cover shadow"
                         src={
                           data?.profileImage
-                            ? `http://localhost:5000/uploads/profile/${data?.profileImage}`
+                            ? `${data?.profileImage}`
                             : "/assets/images/profile/user.png"
                         }
                         alt="User"

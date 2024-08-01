@@ -17,7 +17,7 @@ export default function layout({ children }) {
         <SideNav />
         <div className="body-wrapper">
           <TopNav />
-          <div className="container-fluid">{children}</div>
+          <div className="container-fluid w-full overflow-hidden">{children}</div>
         </div>
       </div>
     </>
