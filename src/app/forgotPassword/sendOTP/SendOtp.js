@@ -33,6 +33,7 @@ function SendOtp({setStep,setEmail,email,setLoading}) {
         setStep(2);
       }
       else{
+        console.log(res);
         toast.error(res.response.data.message);
       }
     } catch (error) {

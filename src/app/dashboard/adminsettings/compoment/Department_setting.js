@@ -65,6 +65,8 @@ const Department_setting = () => {
   }, []);
   return (
     <>
+    <h5>Deparment Settings</h5>
+    <hr />
       <div className="w-full overflow-auto">
         {department_data?<table
           

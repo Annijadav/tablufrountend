@@ -64,7 +64,7 @@ const Basic_setting = () => {
   return (
     <>
       <div>
-        <h5>Basic Settings</h5>
+        <h5>Website Settings</h5>
         <hr />
         <div className="flex flex-col md:flex-row gap-4">
           <label className="w-full md:w-1/2">

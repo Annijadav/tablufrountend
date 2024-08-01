@@ -40,7 +40,8 @@ const handleStatusUpdate=async(did,status)=>{
     }
 }
   return (
-    <>
+    <><h5>Designation Settings</h5>
+        <hr />
       {designations ? (
         <div className="grid grid-cols-1 gap-2">
           {Object.keys(designations).map((departmentName, index) => (

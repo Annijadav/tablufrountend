@@ -197,7 +197,7 @@ function page() {
                           className="form-check-label text-dark"
                           htmlFor="flexCheckChecked"
                         >
-                          Remeber Me
+                          Remember Me
                         </label>
                       </div>
                       <a className="text-primary fw-bold" href="forgotPassword">

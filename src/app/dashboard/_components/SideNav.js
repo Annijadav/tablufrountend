@@ -43,7 +43,7 @@ function SideNav() {
               <i className="ti ti-x fs-8"></i>
             </div>
           </div>
-          <nav className="sidebar-nav scroll-sidebar" data-simplebar="">
+          <nav className="sidebar-nav scroll-sidebar overflow-auto" data-simplebar="">
             <ul id="sidebarnav">
               <li className="nav-small-cap">
                 <i className="ti ti-dots nav-small-cap-icon fs-4"></i>

@@ -11,6 +11,8 @@ export default function layout({ children }) {
         data-navbarbg="skin6"
         data-sidebartype="full"
         //data-sidebar-position="fixed" data-header-position="fixed"
+         
+    data-sidebar-position="fixed" data-header-position="fixed"
       >
         <SideNav />
         <div className="body-wrapper">

@@ -20,11 +20,11 @@ function OtherDetail({ data, edudetail, refreshdata, userid }) {
   ]);
   // console.log(edudetail);
   const [contact, setContact] = useState({
-    name: data[0]?.name,
-    address: data[0]?.address,
-    mobileNo: data[0]?.mobileNo,
-    relationShip: data[0]?.relationShip,
-    email: data[0]?.email,
+    name: data?.name,
+    address: data?.address,
+    mobileNo: data?.mobileNo,
+    relationShip: data?.relationShip,
+    email: data?.email,
   });
 
   const handleContactChange = (e) => {

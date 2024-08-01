@@ -5,38 +5,89 @@ import Users_setting from "./compoment/Users_setting";
 import Department_setting from "./compoment/Department_setting";
 import Designation_setting from "./compoment/Designation_setting";
 import withRole from "@/components/withRole";
-
+import { Menu } from 'antd';
+const items = [
+  {
+    label: 'Website Information',
+    key: 'web',
+    
+  },
+  {
+    label: 'Users',
+    key: 'users',
+   
+  },
+  {
+    label: 'Deparment',
+    key: 'department',
+    
+  },
+  {
+    label: 'Designation',
+    key: 'designation',
+    
+  },
+  {
+    label: 'Roles & Permissions',
+    key: 'role',
+    
+  },
+  // {
+  //   label: 'Navigation Three - Submenu',
+  //   key: 'SubMenu',
+  //   icon: <SettingOutlined />,
+  //   children: [
+  //     {
+  //       type: 'group',
+  //       label: 'Item 1',
+  //       children: [
+  //         {
+  //           label: 'Option 1',
+  //           key: 'setting:1',
+  //         },
+  //         {
+  //           label: 'Option 2',
+  //           key: 'setting:2',
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       type: 'group',
+  //       label: 'Item 2',
+  //       children: [
+  //         {
+  //           label: 'Option 3',
+  //           key: 'setting:3',
+  //         },
+  //         {
+  //           label: 'Option 4',
+  //           key: 'setting:4',
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
+  
+  
+];
 function page() {
-  const [detail, setdetail] = useState(1);
+  
+  const [current, setCurrent] = useState('web');
+  const onClick = (e) => {
+    setCurrent(e.key);
+  };
   const aciveDivCss = "bg-blue-500 text-white rounded";
   return (
     <>
-      <h5 class="card-title fw-semibold mb-4">Admin Dashboard Settings</h5>
+      <div className="w-full overflow-auto"><Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} /></div>
+      <br/>
       <div className="lg:flex w-full  ">
-        <div><ul className="menu  mx-2 mb-2 menu-vertical px-2 shadow-md gap-1 align-center lg:menu-vertical bg-base-200 rounded-xl border bg-white">
-          <h6 className="m-1 text-center w-auto whitespace-nowrap">
-            Settings Menu
-          </h6>
-
-          <li className={detail==1&&aciveDivCss}>
-              <button className={detail==1&&"text-white"} onClick={() => setdetail(1)}>Basic</button>
-            </li>
-            <li className={detail==2&&aciveDivCss}>
-            <button className={detail==2&&"text-white"} onClick={() => setdetail(2)}>Users</button>
-          </li>
-          <li className={detail==3&&aciveDivCss}>
-            <button className={detail==3&&"text-white"} onClick={() => setdetail(3)}>Department</button>
-          </li>
-          <li className={detail==4&&aciveDivCss}>
-            <button className={detail==4&&"text-white"} onClick={() => setdetail(4)}>Designation</button>
-          </li>
-        </ul></div>
         <div class="card w-full">
           <div class="card-body">
-            {detail==1&&<Basic_setting/>}
-            {detail==2&&<Users_setting/>}
-            {detail==3&&<Department_setting/>}
-            {detail==4&&<Designation_setting/>}
+            {current=="web"&&<Basic_setting/>}
+            {current=="users"&&<Users_setting/>}
+            {current=="department"&&<Department_setting/>}
+            {current=="designation"&&<Designation_setting/>}
           </div>
         </div>
       </div>

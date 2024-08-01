@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { workDetailValidate } from "../validations/workDetailValidation";
 import { jobDetailsValidation } from "../validations/jobDetailsValidation";
 import { Checkbox } from "@nextui-org/react";
+import { getFullname } from "@/helpers/Services/user_services";
 
 function WorkDetail({ data, refreshdata, workXp, userid }) {
   //console.log(workXp);
@@ -24,6 +25,7 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [btnLoader, setBtnLoader] = useState(false);
   const [deleteLoader, deleteBtnLoader] = useState(false);
+  const[empList,setEmpList] = useState(null);
   const getDepartmentsList = async () => {
     try {
       const response = await getDepartments();
@@ -69,10 +71,14 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
       console.log(error);
     }
   };
+  const getemplist = async ()=>{
+    await getFullname().then((res)=>{setEmpList(res.data)}).catch((error)=>{console.log(error); toast.error("internal error")})
+  }
   useEffect(() => {
     getDepartmentsList();
     getDesignations();
     getLeaveRuleList();
+    getemplist()
   }, []);
   const toggleOverlay = () => {
     setOverlayVisible(!overlayVisible);
@@ -80,11 +86,11 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
   const [workDetails, setWorkDetails] = useState({
     officeLandlineNumber: data?.officeLandlineNumber,
     employeeCode: data?.employeeCode,
-    leaveRule: data?.leaveRule._id,
+    leaveRule: data?.leaveRule?._id,
     reportingManager: data?.reportingManager,
     shift: data?.shift,
-    department: data?.department._id,
-    designation: data?.designation._id,
+    department: data?.department?._id,
+    designation: data?.designation?._id,
     grade: data?.grade,
     employeeType: data?.employeeType,
     company: data?.company,
@@ -311,29 +317,13 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                 Leave Rule
               </p>
-              <div className="flex"> <label htmlFor="custom-checkbox" className="flex items-center cursor-pointer">
-        <span className="w-5 h-5 inline-block border-2 border-gray-700 rounded-sm mr-2 bg-white transition-colors duration-200 ease-in-out checked:border-blue-500 checked:bg-blue-500 flex justify-center items-center">
-          {1 && (
-            <svg
-              className="w-4 h-4 text-white"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          )}
-        </span>
-        Enable
-      </label>
+              <div className="flex">
               <select
                 name="leaveRule"
-                onChange={handleWorkDetailsChange}
+                onChange={!workDetails.leaveRule&&handleWorkDetailsChange}
                 value={workDetails.leaveRule}
                 className="select input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
+                disabled={workDetails.leaveRule&&true}
               >
                 <option>please select</option>
                 {leaveRule?.map((rule) => (
@@ -346,14 +336,19 @@ function WorkDetail({ data, refreshdata, workXp, userid }) {
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">
                 Reporting Manager
               </p>
-              <input
-                type="text"
+              <select
+                
                 name="reportingManager"
                 placeholder="Reporting Manager"
                 onChange={handleWorkDetailsChange}
                 value={workDetails.reportingManager}
                 className="input focus:bg-gray-100 placeholder:text-gray-200 text-black input-bordered input-md w-full max-w-xs"
-              />
+              >
+                <option>please select</option>
+                {empList?.map((emp)=>(
+                  <option value={emp?._id}>{emp.fullName}</option>
+                ))}
+                </select>
             </div>
             <div className="w-full">
               <p className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-1">

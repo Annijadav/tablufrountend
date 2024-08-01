@@ -1,5 +1,6 @@
 import ImageView from "@/components/ImageView";
 import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { Popconfirm, message } from "antd";
 import Link from "next/link";
 import React, { useState } from "react";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { terminateUser } from "@/helpers/Services/user_services";
+import ConfirmDialog from "@/components/ConfirmDialog ";
 const Employee = ({
   emp,
   currentPage,
@@ -25,6 +27,31 @@ const Employee = ({
   const startIndex = (currentPage - 1) * postPerPage + 1;
   const [showProfile, setShowProfile] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
+  
+  const [checkboxValue, setCheckboxValue] = useState({
+    status: "",
+    id: "",
+  });
+  const [refreshKey, setRefreshKey] = useState(0);
+  const onConfirm = async () => {
+    try {
+      // Call the handleStatusChange function with the correct ID and new status
+      await handleStatusChange(checkboxValue.status, checkboxValue.id);
+      message.success("Status updated successfully!");
+    } catch (error) {
+      message.error("Failed to update status.");
+    }
+  };
+  const handleCancel = () => {
+    setRefreshKey((prevKey) => prevKey + 1); // Trigger re-render
+  };
+  const handleCheckboxChange = (Status, Id) => {
+    console.log(Status + "" + Id);
+    setCheckboxValue({
+      status: Status,
+      id: Id,
+    });
+  };
   const openProfileImageView = (imageUrl) => {
     setSelectedImage(imageUrl);
     setShowProfile(true);
@@ -45,29 +72,25 @@ const Employee = ({
       <span className="toggle-switch-slider"></span>
     </label>
   );
-  const handleEmployeeAction =async (key,uid) => {
-    if(key=="terminate")
-      {
-        try
-        {
-          const res = await terminateUser(uid,{terminate:true});
-          
-          if(res.status == 200)
-            {
-              toast.success(res.data?.message);
-              getEmpList();
-            }
-            else{
-              toast.error(res.response.data.message);
-            }
-      }catch(error){
+  const handleEmployeeAction = async (key, uid) => {
+    if (key == "terminate") {
+      try {
+        const res = await terminateUser(uid, { terminate: true });
+
+        if (res.status == 200) {
+          toast.success(res.data?.message);
+          getEmpList();
+        } else {
+          toast.error(res.response.data.message);
+        }
+      } catch (error) {
         console.log(error);
         toast.error("internal error");
       }
     }
   };
   return (
-    <div>
+    <div  key={refreshKey}>
       {emp ? (
         <div>
           <div className="overflow-x-auto">
@@ -261,14 +284,33 @@ const Employee = ({
                     </td>
                     <td className="py-1 px-2">
                       <label className="inline-flex items-center me-5 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          value=""
-                          name="employeeStatus"
-                          className="sr-only peer"
-                          onChange={(e) => handleStatusChange(e, employee?._id)}
-                          defaultChecked={employee?.workDetails?.employeeStatus}
-                        />
+                        <Popconfirm
+                          title="Change employee status"
+                          description="Are you sure you want to change the status?"
+                          okText="Yes"
+                          cancelText="No"
+                          onConfirm={onConfirm}
+                          onCancel={handleCancel} 
+                        >
+                          <input
+                            type="checkbox"
+                            value=""
+                            name="employeeStatus"
+                            className="sr-only peer"
+                            onChange={(e) =>
+                              handleCheckboxChange(
+                                e.target.checked,
+                                employee?._id
+                              )
+                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                            defaultChecked={
+                              employee?.workDetails?.employeeStatus
+                            }
+                          />
+                        </Popconfirm>
                         <div className="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
                       </label>
                     </td>
@@ -294,7 +336,9 @@ const Employee = ({
                         </DropdownTrigger>
                         <DropdownMenu
                           aria-label="Static Actions"
-                          onAction={(key) => handleEmployeeAction(key,employee._id)}
+                          onAction={(key) =>
+                            handleEmployeeAction(key, employee._id)
+                          }
                         >
                           <DropdownItem key="new"></DropdownItem>
                           <DropdownItem key="copy">Copy link</DropdownItem>

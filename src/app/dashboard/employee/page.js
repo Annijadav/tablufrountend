@@ -44,6 +44,7 @@ function page() {
   const [employeeGenderKeys, setEmployeeGenderKeys] = useState("All");
   const [employeeDepartmentKeys, setEmployeeDepartmentKeys] = useState("All");
   const [employeeDesignationKeys, setEmployeeDesignationKeys] = useState("All");
+  const [showFullScreen, setShowFullScreen] = useState(false);
   useEffect(() => {
     getEmpList();
   }, [
@@ -141,13 +142,22 @@ function page() {
   const handleRowClick = (employeeId) => {
     router.push(`/dashboard/employee/viewemployee/${employeeId}`);
   };
-  const handleStatusChange = async (e, id) => {
-    const newStatus = e.target.checked;
-    toast.success(newStatus);
+  const handleStatusChange = async (status, id) => {
+    const newStatus = status;
+    setemp(null);
+    try{
     const res = await update_employeeStatus(id, { Status: newStatus });
     if (res.status === 200) {
       toast.success(res.data.message);
       getEmpList();
+    }
+    else
+    {
+      toast.success(res.response.data.message);
+    }}catch(error)
+    {
+      toast.error("internal error")
+      console.log(error);
     }
     // Update the employee status in the backend using the newStatus value
   };
@@ -165,7 +175,7 @@ function page() {
     <>
       {showBulk && <BulkUpload setShowBulk={setShowBulk} />}
 
-      <div className="text-sm breadcrumbs">
+      <div className="text-sm breadcrumbs ">
         <ul>
           <li className="font-semibold	">
             <Link className="text-black	" href={"/dashboard/"}>
@@ -176,7 +186,7 @@ function page() {
           <li>Employees </li>
         </ul>
       </div>
-      <div class="card overflow-hidden">
+      <div class={showFullScreen?"fixed inset-0 z-50 bg-white overflow-auto": "card overflow-hidden"}>
         <div class="card-body p-2 m-1">
           <div class="flex justify-between items-center">
             <h3 class="text-lg font-semibold">Employee List</h3>
@@ -209,9 +219,12 @@ function page() {
               </div>
 
               <button
-                class="btn btn-primary m-0 p-2 flex items-center justify-center text-center"
+                class={`btn btn-${showFullScreen?"danger":"primary"} m-0 p-2 flex items-center justify-center text-center`}
+                // onClick={() => {
+                //   setShowBulk(true);
+                // }}
                 onClick={() => {
-                  setShowBulk(true);
+                  setShowFullScreen(!showFullScreen);
                 }}
               >
                 <ScanEye />

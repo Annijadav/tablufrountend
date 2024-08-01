@@ -346,35 +346,32 @@ function page({ params }) {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                       <tr> <td
-                          
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >{employee.workDetails.employeeCode}</td>
-                        <td
-                          
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >{employee.workDetails.employeeStatus ? 'Active' : 'Inactive'}</td>
-                        <td
-                          
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >{employee.workDetails.department.name}</td>
-                        <td
-                          
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >{employee.workDetails.designation.name}</td>
-                        <td
-                          
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >{employee.workDetails.leaveRule.leaveRuleName}</td>
-                        <td
-                          
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >{employee.workDetails.employeeType}</td>
-                        <td
-                          
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >{employee.workDetails.location}</td>
-                      </tr>
+                        <tr>
+                          {" "}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.workDetails.employeeCode}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.workDetails.employeeStatus
+                              ? "Active"
+                              : "Inactive"}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.workDetails.department.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.workDetails.designation.name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.workDetails.leaveRule.leaveRuleName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.workDetails.employeeType}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee.workDetails.location}
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -526,9 +523,7 @@ function page({ params }) {
                 <div className="divider divider-start">
                   <span className="fw-semibold">Emergency Contact Details</span>
                 </div>
-                {employee &&
-                employee.emergencyDetails &&
-                employee.emergencyDetails.length > 0 ? (
+                {employee?.emergencyDetails ? (
                   <div className="bg-white p-2">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
@@ -554,24 +549,27 @@ function page({ params }) {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {employee?.emergencyDetails.length > 0 && (
-                          <tr className="hover:bg-gray-50 transition-colors">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              1
-                            </td>
-                            {Object?.entries(employee?.emergencyDetails[0]).map(
-                              ([key, value]) =>
-                                key !== "_id" && (
-                                  <td
-                                    key={key}
-                                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                                  >
-                                    {value || "Missing"}
-                                  </td>
-                                )
-                            )}
-                          </tr>
-                        )}
+                        <tr className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            1
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee?.emergencyDetails?.name || "Missing"}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee?.emergencyDetails?.address || "Missing"}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee?.emergencyDetails?.mobileNo || "Missing"}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee?.emergencyDetails?.relationShip ||
+                              "Missing"}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {employee?.emergencyDetails?.email || "Missing"}
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
