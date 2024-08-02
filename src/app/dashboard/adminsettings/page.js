@@ -82,7 +82,7 @@ function page() {
       <div className="w-full overflow-auto"><Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} /></div>
       <br/>
       <div className="lg:flex w-full  ">
-        <div class="card w-full">
+        <div class="card w-full  p-0">
           <div class="card-body">
             {current=="web"&&<Basic_setting/>}
             {current=="users"&&<Users_setting/>}

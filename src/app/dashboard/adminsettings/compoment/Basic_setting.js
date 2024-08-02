@@ -320,7 +320,7 @@ const Basic_setting = () => {
             <div className="w-full flex flex-row-reverse mt-2 gap-2">
               {file && (
                 <button
-                  className="bg-red-400 hover:bg-red-600 flex text-white items-center gap-2 px-4 py-2 rounded"
+                  className="bg-red-400 hover:bg-red-600 flex text-white items-center gap-2 px-2 py-2 rounded"
                   onClick={clearFile}
                 >
                   <svg
@@ -363,7 +363,7 @@ const Basic_setting = () => {
           >
             
             <div className="container mx-auto">
-              <div className="px-4">
+              <div className="px-2">
                 <div className="flex mt-3">
                   <span className="mb-2 mr-8 w-1/2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -394,7 +394,7 @@ const Basic_setting = () => {
                 </div>
               </div>
 
-              <div className="px-4">
+              <div className="px-2">
                 <div className="flex mt-3">
                   <span className="mb-2 mr-8 w-1/2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -425,7 +425,7 @@ const Basic_setting = () => {
                 </div>
               </div>
 
-              <div className="flex px-4 mt-3">
+              <div className="flex px-2 mt-3">
                 <span className="mr-8 w-1/4">
                   <label className="block text-sm font-medium text-gray-700">
                     Product Theme Colour
@@ -494,7 +494,7 @@ const Basic_setting = () => {
                 </span>
               </div>
 
-              <div className="px-4">
+              <div className="px-2">
                 <div className="flex mt-3">
                   <span className="mb-2 mr-8 w-1/2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -530,7 +530,7 @@ const Basic_setting = () => {
                 </div>
               </div>
 
-              <div className="px-4">
+              <div className="px-2">
                 <div className="flex mt-3">
                   <span className="mb-2 mr-8 w-1/2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -570,7 +570,7 @@ const Basic_setting = () => {
                 </div>
               </div>
 
-              <div className="px-4">
+              <div className="px-2">
                 <div className="flex mt-3">
                   <span className="mb-2 mr-8 w-1/2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -604,7 +604,7 @@ const Basic_setting = () => {
                 </div>
               </div>
 
-              <div className="px-4">
+              <div className="px-2">
                 <div className="flex mt-3">
                   <span className="mb-2 mr-8 w-1/2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -638,7 +638,7 @@ const Basic_setting = () => {
                 </div>
               </div>
 
-              <div className="px-4">
+              <div className="px-2">
                 <div className="flex mt-3">
                   <span className="mb-2 mr-8 w-1/2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -668,11 +668,11 @@ const Basic_setting = () => {
                 </div>
               </div>
 
-              <div className="justify-items-center px-4 mt-4">
+              <div className="justify-items-center px-2 mt-4">
                 <div className="w-full">
                   <button
                     type="button"
-                    className="text-white rounded bg-green-400 hover:bg-green-600 px-4 py-2.5"
+                    className="text-white rounded bg-green-400 hover:bg-green-600 px-2 py-2.5"
                     onClick={() => {
                       setOverlayVisible(true);
                     }}
@@ -705,13 +705,13 @@ const Basic_setting = () => {
               <div className="flex mt-2  justify-end	">
                 <button
                   onClick={toggleOverlay}
-                  className="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+                  className="mr-2 px-2 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleUpdateCompany(editingItem._id)}
-                  className="px-4 py-2 bg-green-400 text-white rounded hover:bg-green-500"
+                  className="px-2 py-2 bg-green-400 text-white rounded hover:bg-green-500"
                 >
                   Update
                 </button>

@@ -24,7 +24,7 @@ function page() {
     }, 3000); // 2000 milliseconds = 2 seconds
   }
   const handleKeyPress = async(event)=>{
-    console.log(event);
+    // console.log(event);
     if(event.key === "Enter")
     {
       handleLogin();

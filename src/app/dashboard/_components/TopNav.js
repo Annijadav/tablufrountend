@@ -45,8 +45,6 @@ function TopNav() {
         toast.error(res.response.data.message);
         toast.error("Logging Out...");
         handleLogout();
-        
-        
       }
     }catch(error)
     {
