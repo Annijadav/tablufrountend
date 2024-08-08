@@ -1,10 +1,10 @@
 "use client";
 
-import { ExportOutlined , CloseCircleOutlined} from "@ant-design/icons"; // Optional: import icons for buttons
+import { ExportOutlined, CloseCircleOutlined } from "@ant-design/icons"; // Optional: import icons for buttons
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Table, Select,Button, Input, message, Radio, Tooltip } from "antd";
+import { Table, Select, Button, Input, message, Radio, Tooltip } from "antd";
 import {
   get_EmployeesByPage,
   update_employeeStatus,
@@ -186,7 +186,7 @@ const Users_setting = () => {
   };
   const handleClearSelection = () => {
     setSelectedRowKeys([]); // Clear the selection
-    message.info('Selection cleared'); // Inform the user
+    message.info("Selection cleared"); // Inform the user
   };
   const getSelectedEmployeeNames = () => {
     return emp
@@ -293,10 +293,10 @@ const Users_setting = () => {
       className={`w-full ${
         showFullScreen
           ? "fixed inset-0 z-50 bg-white overflow-auto"
-          : "overflow-x-auto"
+          : ""
       }`}
     >
-      <div className="m-1">
+      <div className="m-1 w-full">
         <div className="flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4">
           <h3 className="text-lg font-semibold">Employee List</h3>
           <div className="flex flex-col gap-2 md:flex-row md:gap-4 items-center">
@@ -367,12 +367,11 @@ const Users_setting = () => {
         <br />
 
         {selectedRowKeys.length > 0 && (
-          <div className="border-dashed border-2 rounded-lg p-2 mb-2">
+          <div className="border-dashed border-2 rounded-lg p-2 mb-2 overflow-auto">
             <div className="flex flex-wrap gap-2 mb-2">
               {getSelectedEmployeeNames()}
             </div>
             <div className="flex justify-center items-center gap-2 ">
-              
               <Select
                 value={bulkAction}
                 onChange={setBulkAction}
@@ -405,44 +404,46 @@ const Users_setting = () => {
                 Export Profiles
               </Button>
               <Tooltip title="Clear all selected employees">
-        <Button
-          type="dashed" // Change button type to 'dashed'
-          icon={<CloseCircleOutlined />} // Add icon to button
-          onClick={handleClearSelection}
-          className="flex items-center"
-          danger
-        >
-          Clear Selection
-        </Button>
-      </Tooltip>
+                <Button
+                  type="dashed" // Change button type to 'dashed'
+                  icon={<CloseCircleOutlined />} // Add icon to button
+                  onClick={handleClearSelection}
+                  className="flex items-center"
+                  danger
+                >
+                  Clear Selection
+                </Button>
+              </Tooltip>
             </div>
           </div>
         )}
-
-        <Table
-          rowSelection={{
-            selectedRowKeys,
-            onChange: (selectedRowKeys) => setSelectedRowKeys(selectedRowKeys),
-          }}
-          columns={columns}
-          dataSource={emp}
-          pagination={{
-            current: currentPage,
-            pageSize: postPerPage,
-            total: empCount,
-            showSizeChanger: true,
-            pageSizeOptions: ["10", "20", "50", "100"],
-            onChange: (page, pageSize) => {
-              setCurrentPage(page);
-              setPostPerPage(pageSize);
-            },
-          }}
-          loading={loading}
-          onChange={handleTableChange}
-          rowKey={(record) => record._id}
-          bordered
-          size="small" // Added to make the table more compact
-        />
+        <div className="w-full overflow-auto">
+          <Table
+            rowSelection={{
+              selectedRowKeys,
+              onChange: (selectedRowKeys) =>
+                setSelectedRowKeys(selectedRowKeys),
+            }}
+            columns={columns}
+            dataSource={emp}
+            pagination={{
+              current: currentPage,
+              pageSize: postPerPage,
+              total: empCount,
+              showSizeChanger: true,
+              pageSizeOptions: ["10", "20", "50", "100"],
+              onChange: (page, pageSize) => {
+                setCurrentPage(page);
+                setPostPerPage(pageSize);
+              },
+            }}
+            loading={loading}
+            onChange={handleTableChange}
+            rowKey={(record) => record._id}
+            bordered
+            size="small"
+          />
+        </div>
       </div>
     </div>
   );
