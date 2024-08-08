@@ -43,3 +43,10 @@ export const getUsers = async () => {
       return error;
     })
   }
+  export const getMenuItems = async()=>{
+    return apis.get('/menu/getmenuitems').then((response)=>{
+      return response
+    }).catch((error)=>{
+      return error
+    })
+  }

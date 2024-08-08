@@ -1,8 +1,10 @@
 "use client";
 
+import { ExportOutlined , CloseCircleOutlined} from "@ant-design/icons"; // Optional: import icons for buttons
+
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Table, Button, Input, message, Radio } from "antd";
+import { Table, Select,Button, Input, message, Radio, Tooltip } from "antd";
 import {
   get_EmployeesByPage,
   update_employeeStatus,
@@ -29,7 +31,7 @@ const Users_setting = () => {
   const [employeeDesignationKeys, setEmployeeDesignationKeys] = useState("All");
   const [showFullScreen, setShowFullScreen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
+  const [bulkAction, setBulkAction] = useState("active");
   const columns = [
     {
       title: "Index",
@@ -179,34 +181,68 @@ const Users_setting = () => {
     }
   };
 
-  const handleEmployeeFilters = (key, filterName) => {
-    switch (filterName) {
-      case "employeeStatusKeys":
-        setEmployeeStatusKeys(key);
-        break;
-      case "employeeTypeKeys":
-        setEmployeeTypeKeys(key);
-        break;
-      case "employeeGenderKeys":
-        setEmployeeGenderKeys(key);
-        break;
-      case "employeeDepartmentKeys":
-        setEmployeeDepartmentKeys(key);
-        break;
-      case "employeeDesignationKeys":
-        setEmployeeDesignationKeys(key);
-        break;
-      case "clear":
-        setEmployeeStatusKeys("All");
-        setEmployeeTypeKeys("All");
-        setEmployeeGenderKeys("All");
-        setEmployeeDepartmentKeys("All");
-        setEmployeeDesignationKeys("All");
-        setFilter(false);
-        break;
-      default:
-        break;
+  const removeSelectedEmployee = (id) => {
+    setSelectedRowKeys(selectedRowKeys.filter((key) => key !== id));
+  };
+  const handleClearSelection = () => {
+    setSelectedRowKeys([]); // Clear the selection
+    message.info('Selection cleared'); // Inform the user
+  };
+  const getSelectedEmployeeNames = () => {
+    return emp
+      .filter((employee) => selectedRowKeys.includes(employee._id))
+      .map((employee) => (
+        <div
+          key={employee._id}
+          className="flex items-center gap-2 bg-blue-100 text-blue-800 rounded-full px-3 py-1"
+        >
+          {employee.loginDetails.firstName} {employee.loginDetails.lastName}
+          <button
+            onClick={() => removeSelectedEmployee(employee._id)}
+            className="text-red-500 hover:text-red-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className="w-4 h-4"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.646 4.646a.5.5 0 0 1 .708 0L8 6.293l2.646-2.646a.5.5 0 1 1 .708.708L8.707 7l2.647 2.646a.5.5 0 1 1-.708.708L8 7.707l-2.646 2.646a.5.5 0 1 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
+      ));
+  };
+
+  const handleBulkAction = () => {
+    // Perform bulk action (active/inactive) for selected employees
+    if (bulkAction === "active") {
+      // Handle bulk active
+      selectedRowKeys.forEach((id) => handleStatusChange("Active", id));
+    } else if (bulkAction === "inactive") {
+      // Handle bulk inactive
+      selectedRowKeys.forEach((id) => handleStatusChange("Inactive", id));
     }
+    message.success(`Employees set to ${bulkAction}`);
+  };
+
+  const handleBulkTerminate = () => {
+    // Terminate selected employees
+    selectedRowKeys.forEach((id) => {
+      // Termination logic here
+      console.log(`Terminating employee with ID: ${id}`);
+    });
+    message.success("Selected employees terminated");
+  };
+
+  const handleExportProfile = () => {
+    // Export profile logic here
+    console.log("Exporting selected employee profiles");
+    message.success("Employee profiles exported");
   };
 
   const timerRef = useRef(null);
@@ -329,31 +365,84 @@ const Users_setting = () => {
           <FilterEmployee handleEmloyeeFilters={handleEmloyeeFilters} />
         )}
         <br />
-        <Table
-  rowSelection={{
-    selectedRowKeys,
-    onChange: (selectedRowKeys) => setSelectedRowKeys(selectedRowKeys),
-  }}
-  columns={columns}
-  dataSource={emp}
-  pagination={{
-    current: currentPage,
-    pageSize: postPerPage,
-    total: empCount,
-    showSizeChanger: true,
-    pageSizeOptions: ["10", "20", "50", "100"],
-    onChange: (page, pageSize) => {
-      setCurrentPage(page);
-      setPostPerPage(pageSize);
-    },
-  }}
-  loading={loading}
-  onChange={handleTableChange}
-  rowKey={(record) => record._id}
-  bordered
-  size="small" // Added to make the table more compact
-/>
 
+        {selectedRowKeys.length > 0 && (
+          <div className="border-dashed border-2 rounded-lg p-2 mb-2">
+            <div className="flex flex-wrap gap-2 mb-2">
+              {getSelectedEmployeeNames()}
+            </div>
+            <div className="flex justify-center items-center gap-2 ">
+              
+              <Select
+                value={bulkAction}
+                onChange={setBulkAction}
+                className="w-40"
+                placeholder="Select Action"
+                options={[
+                  { label: "Activate", value: "activate" },
+                  { label: "Deactivate", value: "deactivate" },
+                  { label: "Terminate", value: "terminate" },
+                ]}
+              />
+
+              {/* Ant Design Button for Applying Bulk Action */}
+              <Button
+                type="primary"
+                onClick={handleBulkAction}
+                className="flex items-center"
+                style={{ marginLeft: 8 }}
+              >
+                Apply
+              </Button>
+
+              {/* Ant Design Button for Exporting Profiles */}
+              <Button
+                type="default"
+                icon={<ExportOutlined />} // Add an icon to the button
+                onClick={handleExportProfile}
+                className="flex items-center"
+              >
+                Export Profiles
+              </Button>
+              <Tooltip title="Clear all selected employees">
+        <Button
+          type="dashed" // Change button type to 'dashed'
+          icon={<CloseCircleOutlined />} // Add icon to button
+          onClick={handleClearSelection}
+          className="flex items-center"
+          danger
+        >
+          Clear Selection
+        </Button>
+      </Tooltip>
+            </div>
+          </div>
+        )}
+
+        <Table
+          rowSelection={{
+            selectedRowKeys,
+            onChange: (selectedRowKeys) => setSelectedRowKeys(selectedRowKeys),
+          }}
+          columns={columns}
+          dataSource={emp}
+          pagination={{
+            current: currentPage,
+            pageSize: postPerPage,
+            total: empCount,
+            showSizeChanger: true,
+            pageSizeOptions: ["10", "20", "50", "100"],
+            onChange: (page, pageSize) => {
+              setCurrentPage(page);
+              setPostPerPage(pageSize);
+            },
+          }}
+          loading={loading}
+          onChange={handleTableChange}
+          rowKey={(record) => record._id}
+          bordered
+          size="small" // Added to make the table more compact
+        />
       </div>
     </div>
   );
