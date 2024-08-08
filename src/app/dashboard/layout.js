@@ -9,10 +9,11 @@ export default function layout({ children }) {
         id="main-wrapper"
         data-layout="vertical"
         data-navbarbg="skin6"
-        data-sidebartype="full"
-        //data-sidebar-position="fixed" data-header-position="fixed"
+    //     data-sidebartype="full"
+    //     //data-sidebar-position="fixed" data-header-position="fixed"
          
-    data-sidebar-position="fixed" data-header-position="fixed"
+    // data-sidebar-position="fixed"
+    //  data-header-position="fixed"
       >
         <SideNav />
         <div className="body-wrapper">
