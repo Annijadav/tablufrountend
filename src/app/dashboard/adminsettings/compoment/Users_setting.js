@@ -291,9 +291,7 @@ const Users_setting = () => {
   return (
     <div
       className={`w-full ${
-        showFullScreen
-          ? "fixed inset-0 z-50 bg-white overflow-auto"
-          : ""
+        showFullScreen ? "fixed inset-0 z-50 bg-white overflow-auto" : ""
       }`}
     >
       <div className="m-1 w-full">
@@ -371,49 +369,48 @@ const Users_setting = () => {
             <div className="flex flex-wrap gap-2 mb-2">
               {getSelectedEmployeeNames()}
             </div>
-            <div className="flex justify-center items-center gap-2 ">
-              <Select
-                value={bulkAction}
-                onChange={setBulkAction}
-                className="w-40"
-                placeholder="Select Action"
-                options={[
-                  { label: "Activate", value: "activate" },
-                  { label: "Deactivate", value: "deactivate" },
-                  { label: "Terminate", value: "terminate" },
-                ]}
-              />
-
-              {/* Ant Design Button for Applying Bulk Action */}
-              <Button
-                type="primary"
-                onClick={handleBulkAction}
-                className="flex items-center"
-                style={{ marginLeft: 8 }}
-              >
-                Apply
-              </Button>
-
-              {/* Ant Design Button for Exporting Profiles */}
-              <Button
-                type="default"
-                icon={<ExportOutlined />} // Add an icon to the button
-                onClick={handleExportProfile}
-                className="flex items-center"
-              >
-                Export Profiles
-              </Button>
-              <Tooltip title="Clear all selected employees">
+            <div className="flex flex-col md:flex-row justify-center mt-2 items-center gap-2">
+              <div className="flex flex-wrap gap-2 w-full md:w-auto">
+                <Select
+                  value={bulkAction}
+                  onChange={setBulkAction}
+                  className="w-full md:w-40"
+                  placeholder="Select Action"
+                  options={[
+                    { label: "Activate", value: "activate" },
+                    { label: "Deactivate", value: "deactivate" },
+                    { label: "Terminate", value: "terminate" },
+                  ]}
+                />
+              </div>
+              <div className="flex flex-wrap gap-2 w-full md:w-auto  md:mt-0">
                 <Button
-                  type="dashed" // Change button type to 'dashed'
-                  icon={<CloseCircleOutlined />} // Add icon to button
-                  onClick={handleClearSelection}
-                  className="flex items-center"
-                  danger
+                  type="primary"
+                  onClick={handleBulkAction}
+                  className="w-full md:w-auto"
                 >
-                  Clear Selection
+                  Apply
                 </Button>
-              </Tooltip>
+                <Button
+                  type="default"
+                  icon={<ExportOutlined />}
+                  onClick={handleExportProfile}
+                  className="w-full md:w-auto"
+                >
+                  Export Profiles
+                </Button>
+                <Tooltip title="Clear all selected employees">
+                  <Button
+                    type="dashed"
+                    icon={<CloseCircleOutlined />}
+                    onClick={handleClearSelection}
+                    className="w-full md:w-auto"
+                    danger
+                  >
+                    Clear Selection
+                  </Button>
+                </Tooltip>
+              </div>
             </div>
           </div>
         )}
